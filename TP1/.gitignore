@@ -1,0 +1,10 @@
+pyvenv.cfg
+__pycache__/
+*.env
+bin/
+lib/
+include/
+lib64/
+
+.vscode/
+.cspell.jsonc
