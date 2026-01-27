@@ -1,0 +1,13 @@
+# cache
+__pycache__/
+
+# Virtual envs and env folders
+.env/
+.env
+lib64/
+
+# VS Code
+.vscode/
+
+# Code Spell
+.cspell.jsonc
