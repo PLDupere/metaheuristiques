@@ -1,9 +1,9 @@
-
+from spring_design import SpringDesign
 
 class HillClimbing:
 
-    def __init__(self, spring_design, delta=0.1, max_iterations=50):
-        self.spring_design = spring_design
+    def __init__(self, delta, max_iterations):
+        self.spring_design = SpringDesign()
         self.delta = delta
         self.max_iterations = max_iterations
 
@@ -16,28 +16,17 @@ class HillClimbing:
             best_neighbor = None
             best_cost = float('inf')
 
-            # TODO: Validate 
-            # for neighbor in neighbors:
-            #     cost = self.spring_design.penalized_function(neighbor)
-            #     if cost < best_cost:
-            #         best_cost = cost
-            #         best_neighbor = neighbor
+            # TODO: Validate find slope ??
+            for neighbor in neighbors:
+                safe_neighbor, cost = self.spring_design.calcul_spring(neighbor)
+                if cost < best_cost:
+                    best_cost = cost
+                    best_neighbor = safe_neighbor
 
             if best_cost < current_cost:
                 current_solution = best_neighbor
                 current_cost = best_cost
-
-        # for _ in range(self.max_iterations):
-        #     initial_solution = self.generate_random_solution()
-        #     cost = self.spring_design.spring_function(initial_solution)
-
-        #     print(f"Solution: {solution}, Cost: {cost}")
-
-        #     if cost < self.best_cost:
-        #         self.best_cost = cost
-        #         self.best_solution = solution
-
-        # return self.best_solution, self.best_cost
+                print(f"Nouvelle meilleur solution: {current_solution} avec le coût: {current_cost}")
 
         return current_solution, current_cost
 
@@ -52,3 +41,5 @@ class HillClimbing:
             neighbors.append(down)
 
         return neighbors
+    
+

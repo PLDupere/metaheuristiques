@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     random_search = RandomSearch()
     best_solution, best_cost = random_search.evaluate(int(montecarlo_value), int(heuristique_value))
-    print(f"Best solution: {best_solution}, Best cost: {best_cost}")
+    print(f"Meilleur solution: {best_solution}, Meilleur coût: {best_cost}")
 
     # random_search = RandomSearch(max_iterations=int(montecarlo_value))
     

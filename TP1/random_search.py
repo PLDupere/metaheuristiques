@@ -25,9 +25,13 @@ class RandomSearch:
         initial_solution = self.generate_random_solution()
 
         if heuristique_value == 1:
-            heuristique = HillClimbing(self.spring_design, delta = 0.01, max_iterations = montecarlo_value)
+            heuristique_value = float(input("Entrez le delta du voisinage: (0.1 par exemple) ").replace(',', '.'))
+            neighborhood_value = 1
+            heuristique = GeneralizedHillClimbing(delta = heuristique_value, max_iterations = montecarlo_value, neighborhood_size = neighborhood_value)
         elif heuristique_value == 2:
-            heuristique = GeneralizedHillClimbing()
+            heuristique_value = float(input("Entrez le delta du voisinage: (0.1 par exemple) ").replace(',', '.'))
+            neighborhood_value = int(input("Entrez le nombre voisin (5 par exemple) "))
+            heuristique = GeneralizedHillClimbing(delta = heuristique_value, max_iterations = montecarlo_value, neighborhood_size = neighborhood_value)
         elif heuristique_value == 3:
             heuristique = ContraintesStagnation()
         else:

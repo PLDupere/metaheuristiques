@@ -16,8 +16,10 @@ class SpringDesign:
             {'type': 'ineq', 'fun': self.__constraint_g4},
         ]
 
-    def spring_function(self, x):
-        return x[0]**2 * x[1] + (2 + x[2])
+    def calcul_spring(self, x):
+        safe_x = self.__validate_and_adjust_bounds(x)
+        result = safe_x[0]**2 * safe_x[1] + (2 + safe_x[2])
+        return safe_x, result
 
     def __constraint_g1(self, x):
         return (1 - (x[1]**3 * x[2]) / (71785 * x[0]**4)) <= 0
@@ -30,3 +32,13 @@ class SpringDesign:
 
     def __constraint_g4(self, x):
         return ((x[0] + x[1]) / 1.5) - 1 <= 0
+    
+    def __validate_and_adjust_bounds(self, x):
+        safe_bounds = x.copy()
+        for i in range(len(safe_bounds)):
+            if safe_bounds[i] < self.bounds[i][0]:
+                safe_bounds[i] = self.bounds[i][0]
+            elif safe_bounds[i] > self.bounds[i][1]:
+                safe_bounds[i] = self.bounds[i][1]
+                
+        return safe_bounds
