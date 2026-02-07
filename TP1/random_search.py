@@ -1,10 +1,7 @@
-# 1.3. Recherche aléatoire
-import numpy as np
 from spring_design import SpringDesign
 from hill_climbing import HillClimbing
-from generalized_hill_climbing import GeneralizedHillClimbing
-from contraintes_stagnation import ContraintesStagnation
-# from scipy.optimize import minimize
+from simulated_annealing import SimulatedAnnealing
+
 
 class RandomSearch:
 
@@ -13,30 +10,36 @@ class RandomSearch:
         self.best_solution = None
         self.best_cost = float('inf')
 
-    def generate_random_solution(self):
-        # https://numpy.org/doc/stable/reference/random/generated/numpy.random.uniform.html
-        return [
-            np.random.uniform(self.spring_design.bounds[0][0], self.spring_design.bounds[0][1]),  # x[0]
-            np.random.uniform(self.spring_design.bounds[1][0], self.spring_design.bounds[1][1]),  # x[1]
-            np.random.uniform(self.spring_design.bounds[2][0], self.spring_design.bounds[2][1]),  # x[2]
-        ]
-
-    def evaluate(self, montecarlo_value, heuristique_value):
-        initial_solution = self.generate_random_solution()
+    def evaluate(self, montecarlo_iteration, heuristique_value, stagnation_value, stagnation_iteration):
 
         if heuristique_value == 1:
-            heuristique_value = float(input("Entrez le delta du voisinage: (0.1 par exemple) ").replace(',', '.'))
-            neighborhood_value = 1
-            heuristique = GeneralizedHillClimbing(delta = heuristique_value, max_iterations = montecarlo_value, neighborhood_size = neighborhood_value)
+            delta = float(input("Entrez le delta du voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
+            neighborhood_number = 1
+            heuristique = HillClimbing( delta = delta, 
+                                        max_iterations = montecarlo_iteration, 
+                                        neighborhood_size = neighborhood_number,
+                                        stagnation_value = stagnation_value,
+                                        stagnation_iteration = stagnation_iteration)
         elif heuristique_value == 2:
-            heuristique_value = float(input("Entrez le delta du voisinage: (0.1 par exemple) ").replace(',', '.'))
-            neighborhood_value = int(input("Entrez le nombre voisin (5 par exemple) "))
-            heuristique = GeneralizedHillClimbing(delta = heuristique_value, max_iterations = montecarlo_value, neighborhood_size = neighborhood_value)
+            delta = float(input("Entrez le delta du voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
+            neighborhood_number = int(input("Entrez le nombre voisin (5 par exemple) "))
+            heuristique = HillClimbing( delta = delta, 
+                                        max_iterations = montecarlo_iteration, 
+                                        neighborhood_size = neighborhood_number, 
+                                        stagnation_value = stagnation_value,
+                                        stagnation_iteration = stagnation_iteration)
         elif heuristique_value == 3:
-            heuristique = ContraintesStagnation()
+            temperature = 100.0
+            cooling_rate = float(input("Entrez le taux de refroidissement (0.99 par exemple) "))
+            heuristique = SimulatedAnnealing( delta = delta,
+                                            max_iterations = montecarlo_iteration,
+                                            stagnation_value = stagnation_value,
+                                            stagnation_iteration = stagnation_iteration,
+                                            temperature = temperature,
+                                            cooling_rate = cooling_rate,)
         else:
             raise ValueError("Error: Heuristique non reconnue")
 
-        best_solution, best_cost = heuristique.optimize(initial_solution)
+        best_solution, best_cost = heuristique.optimize()
         return best_solution, best_cost
 

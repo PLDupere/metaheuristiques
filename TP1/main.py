@@ -1,28 +1,24 @@
-from spring_design import SpringDesign
 from random_search import RandomSearch
-from scipy.optimize import minimize
+
 
 if __name__ == "__main__":
 
-    # 1.1. Interface simple (CLI)
     print("Choisir la métaheuristique à exécuter:")
     print("1. Hill Climbing")
     print("2. Generalized Hill Climbing")
-    print("3. Contraintes de Stagnation")
+    print("3. Recuit simulé (Simulated Annealing)")
     heuristique_value = input("Entrez le numéro de votre choix (1, 2 ou 3): ").strip()
-    montecarlo_value = 50
 
-    # montecarlo_value = input("Spécifier  le  nombre  de simulations de Monte-Carlo : ").strip().lower()
-    # stagnation_value = input("Définit la conditions d'arrêt : ").strip().lower()
+    montecarlo_iteration = input("Spécifier  le  nombre  de simulations de Monte-Carlo : (5000 par exemple) ").strip()
+    stagnation_value = input("Définit la valeur de stagnation : (0.001 par exemple) ").strip().replace(',', '.')
+    stagnation_iteration = input("Définit le nombre d'itérations de stagnation : (20 par exemple) ").strip()
 
     random_search = RandomSearch()
-    best_solution, best_cost = random_search.evaluate(int(montecarlo_value), int(heuristique_value))
+    best_solution, best_cost = random_search.evaluate(  int(montecarlo_iteration),
+                                                        int(heuristique_value),
+                                                        float(stagnation_value),
+                                                        int(stagnation_iteration))
     print(f"Meilleur solution: {best_solution}, Meilleur coût: {best_cost}")
 
-    # random_search = RandomSearch(max_iterations=int(montecarlo_value))
-    
 
-    # spring_design = SpringDesign()
-
-    print("END OF PROGRAM")
-    print(":)")
+    print("Fin du programme")
