@@ -45,7 +45,6 @@ class SpringDesign:
                 return False
             elif safe_bounds[i] > self.bounds[i][1]:
                 return False
-                
 
         if self.__constraint_g1(safe_bounds) == False:
             return False

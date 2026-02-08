@@ -8,7 +8,6 @@ if __name__ == "__main__":
     print("2. Generalized Hill Climbing")
     print("3. Recuit simulé (Simulated Annealing)")
     heuristique_value = input("Entrez le numéro de votre choix (1, 2 ou 3): ").strip()
-
     montecarlo_iteration = input("Spécifier  le  nombre  de simulations de Monte-Carlo : (5000 par exemple) ").strip()
     stagnation_value = input("Définit la valeur de stagnation : (0.001 par exemple) ").strip().replace(',', '.')
     stagnation_iteration = input("Définit le nombre d'itérations de stagnation : (20 par exemple) ").strip()
