@@ -14,34 +14,36 @@ class RandomSearch:
 
         if heuristique_value == 1:
             delta = float(input("Entrez le delta du voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
-            neighborhood_number = 1
+            neighborhood_size = 1
             #TODO: RANDOM RESTART ??
             # random_restart = bool(self._get_boolean_input("Do you want to restart the process? (yes or no / y or n): "))
             heuristique = HillClimbing( delta = delta, 
                                         max_iterations = montecarlo_iteration, 
-                                        neighborhood_size = neighborhood_number,
+                                        neighborhood_size = neighborhood_size,
                                         stagnation_value = stagnation_value,
                                         stagnation_iteration = stagnation_iteration)
         elif heuristique_value == 2:
-            delta = float(input("Entrez le delta du voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
-            neighborhood_number = int(input("Entrez le nombre voisin (5 par exemple) "))
+            delta = float(input("Entrez le pas avec le voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
+            neighborhood_size = int(input("Entrez le nombre voisin (5 par exemple) "))
             heuristique = HillClimbing( delta = delta, 
                                         max_iterations = montecarlo_iteration, 
-                                        neighborhood_size = neighborhood_number, 
+                                        neighborhood_size = neighborhood_size, 
                                         stagnation_value = stagnation_value,
                                         stagnation_iteration = stagnation_iteration)
         elif heuristique_value == 3:
             temperature = 100.0
             cooling_rate = float(input("Entrez le taux de refroidissement (0.99 par exemple) "))
-            step_size = float(input("Entrez le pas (0.25 par exemple) "))
+            step_size = float(input("Entrez le pas de déplacement (0.25 par exemple) "))
             cooling_type = self.__get_cooling_type()
+            adaptive_factor = float(input("Entrez le facteur d'adaptation pour la remontée de température (1.1 par exemple) "))
             heuristique = SimulatedAnnealing(max_iterations = montecarlo_iteration,
                                             stagnation_value = stagnation_value,
                                             stagnation_iteration = stagnation_iteration,
                                             temperature = temperature,
                                             cooling_rate = cooling_rate,
                                             step_size = step_size,
-                                            cooling_type = cooling_type)
+                                            cooling_type = cooling_type,
+                                            adaptive_factor=adaptive_factor)
         else:
             raise ValueError("Error: Heuristique non reconnue")
 

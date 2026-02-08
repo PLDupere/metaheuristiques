@@ -19,3 +19,6 @@ __pycache__/
 
 # Code Spell
 .cspell.jsonc
+
+# Results
+results/

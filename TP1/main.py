@@ -19,5 +19,8 @@ if __name__ == "__main__":
                                                         int(stagnation_iteration))
     print(f"Meilleur solution: {best_solution}, Meilleur coût: {best_cost}")
 
+    #TODO: Uncomment to plot the solution
+    # spring_design = random_search.spring_design
+    # spring_design.plot_solution()
 
     print("Fin du programme")

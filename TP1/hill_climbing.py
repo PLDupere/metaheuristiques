@@ -1,3 +1,4 @@
+from historical_record import HistoricalRecord
 from spring_design import SpringDesign
 
 class HillClimbing:
@@ -15,7 +16,7 @@ class HillClimbing:
         best_cost = self.spring_design.calcul_spring(best_solution)
         stagnation_counter = 0
 
-        for _ in range(self.max_iterations):
+        for iteration in range(self.max_iterations):
             neighbors = self.__generate_neighbors(best_solution, self.neighborhood_size)
 
             temp_neighbor = None
@@ -26,6 +27,10 @@ class HillClimbing:
                     continue
 
                 cost = self.spring_design.calcul_spring(neighbor)
+                if self.neighborhood_size == 1:
+                    HistoricalRecord.save_to_csv('hill_climbing', iteration, neighbor, cost)
+                else:
+                    HistoricalRecord.save_to_csv('generalized_hill_climbing', iteration, neighbor, cost)
 
                 if cost < temp_cost:
                     temp_cost = cost

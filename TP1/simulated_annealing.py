@@ -1,11 +1,13 @@
 import math
 import numpy as np
 from spring_design import SpringDesign
+from historical_record import HistoricalRecord
 
 
 class SimulatedAnnealing:
 
-    def __init__(self, max_iterations, stagnation_value, stagnation_iteration, temperature, cooling_rate, step_size, cooling_type):
+    def __init__(self, max_iterations, stagnation_value, stagnation_iteration, 
+                    temperature, cooling_rate, step_size, cooling_type, adaptive_factor):
 
         self.spring_design = SpringDesign()
         self.max_iterations = max_iterations
@@ -15,6 +17,7 @@ class SimulatedAnnealing:
         self.cooling_rate = cooling_rate
         self.step_size = step_size
         self.cooling_type = cooling_type
+        self.adaptive_factor = adaptive_factor
 
     def optimize(self):
         initial_temperature = self.temperature
@@ -35,6 +38,7 @@ class SimulatedAnnealing:
                 continue
 
             new_cost = self.spring_design.calcul_spring(new_solution)
+            HistoricalRecord.save_to_csv('simulated_annealing', iteration, new_solution, new_cost)
             delta_cost = new_cost - current_cost
 
             if delta_cost < 0 or np.random.rand() < np.exp(-delta_cost / self.temperature):
@@ -49,11 +53,12 @@ class SimulatedAnnealing:
             else:
                 stagnation_counter += 1
 
-            self.__cooling_strategy(iteration, initial_temperature)
-
             if stagnation_counter >= self.stagnation_iteration:
-                print("Stagnation détectée")
-                break
+                self.temperature += self.adaptive_factor * self.temperature
+                print(f"Stagnation détectée, remontée de la température à {self.temperature:.12f}")
+                stagnation_counter = 0
+
+            self.__cooling_strategy(iteration, initial_temperature)
 
         return best_solution, best_cost
 
