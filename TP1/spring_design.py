@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 
 
@@ -33,7 +32,7 @@ class SpringDesign:
         result_g4 = ((x[0] + x[1]) / 1.5) -1
         return result_g4 <= 0
 
-    def __generate_random_solution(self):
+    def generate_random_solution(self):
         # https://numpy.org/doc/stable/reference/random/generated/numpy.random.uniform.html
         return [
             np.random.uniform(self.bounds[0][0], self.bounds[0][1]),  # x[0]
@@ -62,34 +61,6 @@ class SpringDesign:
 
     def generate_valid_random_solution(self):
         while True:
-            solution = self.__generate_random_solution()
+            solution = self.generate_random_solution()
             if self.is_valid(solution):
                 return solution
-
-    def plot_solution(self):
-        resolution = 100
-        x0_vals = np.linspace(self.bounds[0][0], self.bounds[0][1], resolution)
-        x1_vals = np.linspace(self.bounds[1][0], self.bounds[1][1], resolution)
-        x2_vals = np.linspace(self.bounds[2][0], self.bounds[2][1], resolution) 
-        X = []
-        Y = []
-        Z = []
-        for x0 in x0_vals:
-            for x1 in x1_vals:
-                for x2 in x2_vals:
-                    x = [x0, x1, x2]
-                    if self.is_valid(x):
-                        X.append(x0)
-                        Y.append(x1)
-                        Z.append(x2)
-        # https://matplotlib.org/stable/api/pyplot_summary.html
-        fig = plt.figure(figsize=(9,7))
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(X, Y, Z, alpha=0.15, s=5, color='red', label='Solutions valides')
-        ax.set_xlabel('Diamètre du fil (x0)')
-        ax.set_ylabel('Diamètre spirale (x1)')
-        ax.set_zlabel('Nb spirales (x2)')
-        ax.set_title('Espace des solutions valides')
-        ax.legend()
-        plt.savefig("results/valid_space.png")
-        print("Plot saved: results/valid_space.png")

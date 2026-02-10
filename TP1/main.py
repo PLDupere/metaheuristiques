@@ -1,26 +1,62 @@
+from helper import Helper
 from random_search import RandomSearch
+from hill_climbing import HillClimbing
+from simulated_annealing import SimulatedAnnealing
 
 
 if __name__ == "__main__":
+    print("Métaheuristique pour l'optimisation de ressorts")
+    montecarlo_iteration = int(input("Spécifier  le  nombre  de simulations de Monte-Carlo : (10000 par exemple) ").strip())
+    print("Random Search")
+    iterations = int(input("Définit le nombre d'itérations : (100 par exemple) ").strip().replace(',', '.'))
+    print("Hill Climbing")
+    delta = float(input("Entrez le pas avec le voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
+    neighborhood_size = int(input("Entrez le nombre voisin (5 par exemple) "))
+    stagnation_value = float(input("Définit la valeur de stagnation : (0.001 par exemple) ").strip().replace(',', '.'))
+    stagnation_iteration = int(input("Définit le nombre d'itérations de stagnation : (20 par exemple) ").strip())
+    print("Recuit simulé (Simulated Annealing)")
+    temperature = 100.0
+    cooling_rate = float(input("Entrez le taux de refroidissement (0.99 par exemple) "))
+    step_size = float(input("Entrez le pas de déplacement (0.25 par exemple) "))
+    cooling_type = Helper().get_cooling_type()
+    adaptive_factor = float(input("Entrez le facteur d'adaptation pour la remontée de température (1.1 par exemple) "))
 
-    print("Choisir la métaheuristique à exécuter:")
-    print("1. Hill Climbing")
-    print("2. Generalized Hill Climbing")
-    print("3. Recuit simulé (Simulated Annealing)")
-    heuristique_value = input("Entrez le numéro de votre choix (1, 2 ou 3): ").strip()
-    montecarlo_iteration = input("Spécifier  le  nombre  de simulations de Monte-Carlo : (5000 par exemple) ").strip()
-    stagnation_value = input("Définit la valeur de stagnation : (0.001 par exemple) ").strip().replace(',', '.')
-    stagnation_iteration = input("Définit le nombre d'itérations de stagnation : (20 par exemple) ").strip()
 
-    random_search = RandomSearch()
-    best_solution, best_cost = random_search.evaluate(  int(montecarlo_iteration),
-                                                        int(heuristique_value),
-                                                        float(stagnation_value),
-                                                        int(stagnation_iteration))
-    print(f"Meilleur solution: {best_solution}, Meilleur coût: {best_cost}")
+    best_random_solution = None
+    best_random_cost = float('inf')
+    best_climbing_hill_solution = None
+    best_climbing_hill_cost = float('inf')
+    best_generalized_hill_climbing_solution = None
+    best_generalized_hill_climbing_cost = float('inf')
+    best_simulated_annealing_solution = None
+    best_simulated_annealing_cost = float('inf')
 
-    #TODO: Uncomment to plot the solution
-    # spring_design = random_search.spring_design
-    # spring_design.plot_solution()
+    random_Search = RandomSearch(iterations)
+    hill_climbing = HillClimbing(delta, iterations, neighborhood_size, stagnation_value, stagnation_iteration)
+    simulated_annealing = SimulatedAnnealing(iterations, stagnation_value, stagnation_iteration, temperature, 
+                                                cooling_rate, step_size, cooling_type, adaptive_factor)
 
-    print("Fin du programme")
+    for iteration in range(montecarlo_iteration):
+        random_Search_solution, random_Search_cost = random_Search.optimize()
+        Helper.save_to_csv(f'random_search_{montecarlo_iteration}', iteration, random_Search_solution, random_Search_cost)
+        if random_Search_cost < best_random_cost:
+            best_random_solution = random_Search_solution.copy()
+            best_random_cost = random_Search_cost
+
+        hill_climbing_solution, hill_climbing_cost = hill_climbing.optimize()
+        Helper.save_to_csv(f'hill_climbing_{montecarlo_iteration}', iteration, hill_climbing_solution, hill_climbing_cost)
+        if hill_climbing_cost < best_climbing_hill_cost:
+            best_climbing_hill_solution = hill_climbing_solution.copy()
+            best_climbing_hill_cost = hill_climbing_cost
+
+        simulated_annealing_solution, simulated_annealing_cost = simulated_annealing.optimize()
+        Helper.save_to_csv(f'simulated_annealing_{montecarlo_iteration}', iteration, simulated_annealing_solution, simulated_annealing_cost)
+        if simulated_annealing_cost < best_simulated_annealing_cost:
+            best_simulated_annealing_solution = simulated_annealing_solution.copy()
+            best_simulated_annealing_cost = simulated_annealing_cost
+
+    Helper().plot_solution(best_random_solution, best_climbing_hill_solution, best_simulated_annealing_solution)
+
+    print("Meilleure solution Random Search: ", best_random_solution, "Coût: ", best_random_cost)
+    print("Meilleure solution Hill Climbing: ", best_climbing_hill_solution, "Coût: ", best_climbing_hill_cost)
+    print("Meilleure solution Simulated Annealing: ", best_simulated_annealing_solution, "Coût: ", best_simulated_annealing_cost)

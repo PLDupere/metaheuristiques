@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from spring_design import SpringDesign
-from historical_record import HistoricalRecord
+from helper import Helper
 
 
 class SimulatedAnnealing:
@@ -38,7 +38,7 @@ class SimulatedAnnealing:
                 continue
 
             new_cost = self.spring_design.calcul_spring(new_solution)
-            HistoricalRecord.save_to_csv('simulated_annealing', iteration, new_solution, new_cost)
+            # Helper.save_to_csv('simulated_annealing', iteration, new_solution, new_cost)
             delta_cost = new_cost - current_cost
 
             if delta_cost < 0 or np.random.rand() < np.exp(-delta_cost / self.temperature):
@@ -49,7 +49,7 @@ class SimulatedAnnealing:
                 best_solution = current_solution.copy()
                 best_cost = current_cost
                 stagnation_counter = 0
-                print(f"Nouveau meilleur: {best_solution} coût: {best_cost}")
+                print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
             else:
                 stagnation_counter += 1
 

@@ -1,4 +1,4 @@
-from historical_record import HistoricalRecord
+from helper import Helper
 from spring_design import SpringDesign
 
 class HillClimbing:
@@ -27,10 +27,10 @@ class HillClimbing:
                     continue
 
                 cost = self.spring_design.calcul_spring(neighbor)
-                if self.neighborhood_size == 1:
-                    HistoricalRecord.save_to_csv('hill_climbing', iteration, neighbor, cost)
-                else:
-                    HistoricalRecord.save_to_csv('generalized_hill_climbing', iteration, neighbor, cost)
+                # if self.neighborhood_size == 1:
+                #     Helper.save_to_csv('hill_climbing', iteration, neighbor, cost)
+                # else:
+                #     Helper.save_to_csv('generalized_hill_climbing', iteration, neighbor, cost)
 
                 if cost < temp_cost:
                     temp_cost = cost
