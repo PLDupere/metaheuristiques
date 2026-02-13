@@ -6,18 +6,19 @@ from simulated_annealing import SimulatedAnnealing
 
 if __name__ == "__main__":
     print("Métaheuristique pour l'optimisation de ressorts")
+    print("Les paramètres suivants seront utilisés pour les trois algorithmes (Random Search, Hill Climbing et Simulated Annealing)")
     montecarlo_iteration = int(input("Spécifier  le  nombre  de simulations de Monte-Carlo : (10000 par exemple) ").strip())
     print("Random Search")
     iterations = int(input("Définit le nombre d'itérations : (100 par exemple) ").strip().replace(',', '.'))
     print("Hill Climbing")
-    delta = float(input("Entrez le pas avec le voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
+    step = float(input("Entrez le pas avec le voisinage: (0.25 par exemple) ").strip().replace(',', '.'))
     neighborhood_size = int(input("Entrez le nombre voisin (5 par exemple) "))
     stagnation_value = float(input("Définit la valeur de stagnation : (0.001 par exemple) ").strip().replace(',', '.'))
-    stagnation_iteration = int(input("Définit le nombre d'itérations de stagnation : (20 par exemple) ").strip())
+    stagnation_iteration = int(input("Définit le nombre d'itérations de stagnation : (50 par exemple) ").strip())
     print("Recuit simulé (Simulated Annealing)")
+    delta = float(input("Entrez le delta avec le voisinage: (5 par exemple) ").strip().replace(',', '.'))
     temperature = 100.0
     cooling_rate = float(input("Entrez le taux de refroidissement (0.99 par exemple) "))
-    step_size = float(input("Entrez le pas de déplacement (0.25 par exemple) "))
     cooling_type = Helper().get_cooling_type()
     adaptive_factor = float(input("Entrez le facteur d'adaptation pour la remontée de température (1.1 par exemple) "))
 
@@ -32,9 +33,9 @@ if __name__ == "__main__":
     best_simulated_annealing_cost = float('inf')
 
     random_Search = RandomSearch(iterations)
-    hill_climbing = HillClimbing(delta, iterations, neighborhood_size, stagnation_value, stagnation_iteration)
+    hill_climbing = HillClimbing(step, iterations, neighborhood_size, stagnation_value, stagnation_iteration)
     simulated_annealing = SimulatedAnnealing(iterations, stagnation_value, stagnation_iteration, temperature, 
-                                                cooling_rate, step_size, cooling_type, adaptive_factor)
+                                                cooling_rate, delta, cooling_type, adaptive_factor, neighborhood_size)
 
     for iteration in range(montecarlo_iteration):
         random_Search_solution, random_Search_cost = random_Search.optimize()

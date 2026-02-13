@@ -3,9 +3,9 @@ from spring_design import SpringDesign
 
 class HillClimbing:
 
-    def __init__(self, delta, max_iterations, neighborhood_size, stagnation_value, stagnation_iteration):
+    def __init__(self, step, max_iterations, neighborhood_size, stagnation_value, stagnation_iteration):
         self.spring_design = SpringDesign()
-        self.delta = delta
+        self.step = step
         self.max_iterations = max_iterations
         self.neighborhood_size = neighborhood_size
         self.stagnation_value = stagnation_value
@@ -54,10 +54,11 @@ class HillClimbing:
         neighbors = []
         for _ in range(neighborhood_size):
             for i in range(len(solution)):
-                up = solution.copy()
-                down = solution.copy()
-                up[i] += self.delta
-                down[i] -= self.delta
-                neighbors.append(up)
-                neighbors.append(down)
+                up_solution = solution.copy()
+                up_solution[i] += self.step
+                neighbors.append(up_solution)
+                down_solution = solution.copy()
+                down_solution[i] -= self.step
+                neighbors.append(down_solution)
+
         return neighbors

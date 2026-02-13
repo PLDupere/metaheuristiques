@@ -12,8 +12,8 @@ class SpringDesign:
 
     def calcul_spring(self, x):
         if not self.is_valid(x):
-            return float('inf')
-        # TODO: Ajouter pénalité pour contraintes violées
+            return self.__penalty(x)
+
         return x[0]**2 * x[1] + (2 + x[2])
 
     def __constraint_g1(self, x):
@@ -58,6 +58,20 @@ class SpringDesign:
             return False
 
         return True
+    
+    def __penalty(self, x):
+        penalty = 0.0
+
+        if not self.__constraint_g1(x):
+            penalty += x ** 2
+        if not self.__constraint_g2(x):
+            penalty += x ** 2 
+        if not self.__constraint_g3(x):
+            penalty += x ** 2
+        if not self.__constraint_g4(x):
+            penalty += x ** 2
+
+        return [x[i] for i in range(len(x))] + [penalty]
 
     def generate_valid_random_solution(self):
         while True:
