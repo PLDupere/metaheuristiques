@@ -24,10 +24,12 @@ class Helper:
             writer.writerow({
                 'iteration': iteration,
                 'solution': solution,
-                'cost': cost
+                'cost': f"{cost:.5f}"
             })
 
-    def get_cooling_type(self):
+
+    @staticmethod
+    def get_cooling_type():
         while True:
             cooling_type = input("Entrez le type de refroidissement ( 1: exponential, 2: linear, 3: logarithmic): ").strip().lower()
             if cooling_type == '1':
@@ -39,6 +41,8 @@ class Helper:
             else:
                 print("Invalid input. Please enter 1, 2 or 3.")
 
+
+    @staticmethod
     def get_boolean_input(text):
         while True:
             user_input = input(text).strip().lower()
@@ -48,6 +52,40 @@ class Helper:
                 return False
             else:
                 print("Invalid input. Please enter 'yes' or 'no'.")
+
+
+    @staticmethod
+    def get_integer_input(text):
+        while True:
+            enter = input(text).strip()
+            value = int(enter)
+            if value > 0:
+                return value
+            else:
+                print("Erreur : Le nombre positif.")
+
+
+    @staticmethod
+    def get_float_input(text):
+        while True:
+            enter = input(text).strip().replace(',', '.')
+            value = float(enter)
+            if value > 0:
+                return value
+            else:
+                print("Erreur : Le facteur d'adaptation doit être un nombre positif.")
+
+
+    @staticmethod
+    def get_pourcentage_variation():
+        while True:
+            enter = input("Entrez le pourcentage de variation (0.25 par exemple) : ").strip().replace(',', '.')
+            pourcentage_variation = float(enter)
+            if 0 <= pourcentage_variation <= 1:
+                return pourcentage_variation
+            else:
+                print("Erreur : Le pourcentage de variation doit être compris entre 0 et 1.")
+
 
     def plot_solution(self, best_random_solution, best_climbing_hill_solution, best_simulated_annealing_solution):
         # https://matplotlib.org/stable/api/pyplot_summary.html
