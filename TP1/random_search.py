@@ -19,9 +19,10 @@ class RandomSearch:
                 cost = self.spring_design.calcul_spring(solution)
                 # Helper.save_to_csv('random_search', iteration, solution, cost)
 
-                if cost < best_cost:
-                    best_solution = solution.copy()
-                    best_cost = cost
-                    print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
+                if self.spring_design.is_valid(solution):
+                    if cost < best_cost:
+                        best_solution = solution.copy()
+                        best_cost = cost
+                        print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
 
         return best_solution, best_cost
