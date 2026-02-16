@@ -24,25 +24,25 @@ class HillClimbing:
             tmp_cost = float('inf')
 
             for neighbor in neighbors:
-                if not self.spring_design.is_valid(neighbor):
-                    continue
-
                 cost = self.spring_design.calcul_spring(neighbor)
-                # Keep for report
-                # if self.neighborhood_size == 1:
-                #     Helper.save_to_csv('hill_climbing', iteration, neighbor, cost)
-                # else:
-                #     Helper.save_to_csv('generalized_hill_climbing', iteration, neighbor, cost)
+
+            # Reduce by 5%
+            if cost > 100:
+                if self.pourcentage_variation >= 0.05:
+                    self.pourcentage_variation *= 0.95
 
                 if cost < tmp_cost:
                     tmp_cost = cost
                     tmp_neighbor = neighbor
-
-            if tmp_neighbor is not None and tmp_cost < best_cost:
-                best_solution = tmp_neighbor.copy()
-                best_cost = tmp_cost
-                stagnation_counter = 0
-                print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
+            
+            if  self.spring_design.is_valid(neighbor):
+                if tmp_neighbor is not None and tmp_cost < best_cost:
+                    best_solution = tmp_neighbor.copy()
+                    best_cost = tmp_cost
+                    stagnation_counter = 0
+                    print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
+                else:
+                    stagnation_counter += 1
             else:
                 stagnation_counter += 1
 

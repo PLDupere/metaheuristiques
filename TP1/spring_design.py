@@ -13,29 +13,33 @@ class SpringDesign:
 
     def calcul_spring(self, x):
         if not self.is_valid(x):
-            return float('inf')
-            # return self.__penalty(x)
+            return self.__penalty(x)
         return x[0]**2 * x[1] + (2 + x[2])
 
 
-    def __constraint_g1(self, x):
-        result_g1 = 1 - (x[1]**3 * x[2]) / (71785 * x[0]**4)
-        return result_g1 <= 0
+    def __calcul_g1(self, x):
+        return 1 - (x[1]**3 * x[2]) / (71785 * x[0]**4)
 
+    def __calcul_g2(self, x):
+        return ((4 * x[1]**2 - x[0] * x[1]) / (12566 * (x[1] * x[0]**3 - x[0]**4))) + (1 / (5108 * x[0]**2)) - 1
+
+    def __calcul_g3(self, x):
+        return 1 - (140.45 * x[0]) / (x[1]**2 * x[2])
+
+    def __calcul_g4(self, x):
+        return ((x[0] + x[1]) / 1.5) -1
+
+    def __constraint_g1(self, x):
+        return self.__calcul_g1(x) <= 0
 
     def __constraint_g2(self, x):
-        result_g2 = ((4 * x[1]**2 - x[0] * x[1]) / (12566 * (x[1] * x[0]**3 - x[0]**4))) + (1 / (5108 * x[0]**2)) - 1
-        return result_g2 <= 0
-
+        return self.__calcul_g2(x) <= 0
 
     def __constraint_g3(self, x):
-        result_g3 = 1 - (140.45 * x[0]) / (x[1]**2 * x[2])
-        return result_g3 <= 0
-
+        return self.__calcul_g3(x) <= 0
 
     def __constraint_g4(self, x):
-        result_g4 = ((x[0] + x[1]) / 1.5) -1
-        return result_g4 <= 0
+        return self.__calcul_g4(x) <= 0
 
 
     def generate_random_solution(self):
@@ -64,18 +68,32 @@ class SpringDesign:
             return False
         return True
 
-#TODO: IMP
     def __penalty(self, x):
         penalty = 0.0
-        if not self.__constraint_g1(x):
-            penalty += x ** 2
-        if not self.__constraint_g2(x):
-            penalty += x ** 2 
-        if not self.__constraint_g3(x):
-            penalty += x ** 2
-        if not self.__constraint_g4(x):
-            penalty += x ** 2
-        return [x[i] for i in range(len(x))] + [penalty]
+
+        for i in range(len(x)):
+            lower, upper = self.bounds[i]
+            if x[i] < lower:
+                penalty += (lower - x[i])
+            elif x[i] > upper:
+                penalty += (x[i] - upper)
+
+        g1_penalty = self.__calcul_g1(x)
+        if g1_penalty > 0:
+            penalty += g1_penalty
+        g2_penalty = self.__calcul_g2(x)
+        if g2_penalty > 0:
+            penalty += g2_penalty
+        g3_penalty = self.__calcul_g3(x)
+        if g3_penalty > 0:
+            penalty += g3_penalty
+        g4_penalty = self.__calcul_g4(x)
+        if g4_penalty > 0:
+            penalty += g4_penalty
+
+        cost = x[0]**2 * x[1] + (2 + x[2])
+        return cost + (penalty ** 2)
+
 
     def generate_valid_random_solution(self):
         while True:

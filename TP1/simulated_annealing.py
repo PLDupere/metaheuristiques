@@ -6,7 +6,7 @@ from spring_design import SpringDesign
 class SimulatedAnnealing:
 
     def __init__(self, max_iterations, stagnation_value, stagnation_iteration, temperature,
-                    cooling_rate, cooling_type, adaptive_factor, neighborhood_size):
+                    cooling_rate, cooling_type, adaptive_factor):
 
         self.spring_design = SpringDesign()
         self.max_iterations = max_iterations
@@ -47,18 +47,19 @@ class SimulatedAnnealing:
                 current_solution = tmp_solution
                 current_cost = tmp_cost
 
-            if current_cost < best_cost - self.stagnation_value:
-                best_solution = current_solution.copy()
-                best_cost = current_cost
-                stagnation_counter = 0
-                print(f"Nouvelle meilleure: {best_solution} coût={best_cost:.12f}")
-            else:
-                stagnation_counter += 1
+            if  self.spring_design.is_valid(current_solution):
+                if current_cost < best_cost:
+                    best_solution = current_solution.copy()
+                    best_cost = current_cost
+                    stagnation_counter = 0
+                    print(f"Nouvelle meilleure: {best_solution} coût={best_cost:.12f}")
 
+            if abs(delta) > self.stagnation_value:
+                stagnation_counter += 1
             if stagnation_counter >= self.stagnation_iteration:
-                temperature *= (1 + self.adaptive_factor)
+                temperature = self.adaptive_factor
                 stagnation_counter = 0
-                print(f"Réchauffement → T = {temperature:.6f}")
+                print(f"Réchauffement → T = {temperature:.12f}")
 
             temperature = self.__cooling_strategy(iteration, temperature)
         return best_solution, best_cost
@@ -70,7 +71,7 @@ class SimulatedAnnealing:
         elif self.cooling_type == "linear":
             temperature -= self.initial_temperature * (1 - self.cooling_rate)
         elif self.cooling_type == "logarithmic":
-            temperature = self.initial_temperature / math.log(iteration + 2)
+            temperature = self.initial_temperature / (1 + math.log(iteration + 1))
         #Safety
         if temperature < 1e-12:
             temperature = 1e-12

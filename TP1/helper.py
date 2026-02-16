@@ -77,12 +77,12 @@ class Helper:
 
 
     @staticmethod
-    def get_pourcentage_variation():
+    def get_value_between_0_and_1(text):
         while True:
-            enter = input("Entrez le pourcentage de variation (0.25 par exemple) : ").strip().replace(',', '.')
-            pourcentage_variation = float(enter)
-            if 0 <= pourcentage_variation <= 1:
-                return pourcentage_variation
+            enter = input(text).strip().replace(',', '.')
+            value = float(enter)
+            if 0 <= value <= 1:
+                return value
             else:
                 print("Erreur : Le pourcentage de variation doit être compris entre 0 et 1.")
 

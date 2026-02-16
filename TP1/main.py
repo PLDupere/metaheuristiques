@@ -11,15 +11,15 @@ if __name__ == "__main__":
     print("Random Search")
     iterations = Helper.get_integer_input("Définit le nombre d'itérations : (100 par exemple) ")
     print("Hill Climbing")
-    pourcentage_variation = Helper.get_pourcentage_variation()
+    pourcentage_variation = Helper.get_value_between_0_and_1("Entrez le pourcentage de variation (0.25 par exemple) : ")
     neighborhood_size = Helper.get_integer_input("Entrez le nombre voisin (5 par exemple) ")
     stagnation_value = Helper.get_float_input("Définit la valeur de stagnation : (0.001 par exemple) ")
     stagnation_iteration = Helper.get_integer_input("Définit le nombre d'itérations de stagnation : (50 par exemple) ")
     print("Recuit simulé (Simulated Annealing)")
     temperature = 1.0
-    cooling_rate = Helper.get_float_input("Entrez le taux de refroidissement (0.99 par exemple) ")
+    cooling_rate = Helper.get_value_between_0_and_1("Entrez le taux de refroidissement (0.99 par exemple) ")
     cooling_type = Helper().get_cooling_type()
-    adaptive_factor = Helper.get_float_input("Entrez le facteur d'adaptation pour la remontée de température : (1.15 par exemple) ")
+    adaptive_factor = Helper.get_value_between_0_and_1("Entrez le facteur d'adaptation pour la remontée de température : (0.15 par exemple) ")
 
 
     best_random_solution = None
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     random_Search = RandomSearch(iterations)
     hill_climbing = HillClimbing(pourcentage_variation, iterations, neighborhood_size, stagnation_value, stagnation_iteration)
     simulated_annealing = SimulatedAnnealing(iterations, stagnation_value, stagnation_iteration, temperature, 
-                                                cooling_rate, cooling_type, adaptive_factor, neighborhood_size)
+                                                cooling_rate, cooling_type, adaptive_factor)
 
     for iteration in range(montecarlo_iteration):
         random_Search_solution, random_Search_cost = random_Search.optimize()
