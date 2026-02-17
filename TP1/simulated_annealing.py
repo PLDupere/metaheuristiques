@@ -20,10 +20,10 @@ class SimulatedAnnealing:
 
     def optimize(self):
         temperature = self.initial_temperature
-        current_solution = np.array(self.spring_design.generate_valid_random_solution())
+        current_solution = np.array(self.spring_design.generate_random_solution())
         current_cost = self.__cost(current_solution)
-        best_solution = current_solution.copy()
-        best_cost = current_cost
+        best_solution = None
+        best_cost = float('inf')
         stagnation_counter = 0
 
         for iteration in range(self.max_iterations):
@@ -69,7 +69,7 @@ class SimulatedAnnealing:
         if self.cooling_type == "exponential":
             temperature *= self.cooling_rate
         elif self.cooling_type == "linear":
-            temperature -= self.initial_temperature * (1 - self.cooling_rate)
+            temperature = self.initial_temperature * (1 - iteration / self.max_iterations)
         elif self.cooling_type == "logarithmic":
             temperature = self.initial_temperature / (1 + math.log(iteration + 1))
         #Safety

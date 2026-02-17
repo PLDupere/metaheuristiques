@@ -37,17 +37,17 @@ if __name__ == "__main__":
                                                 cooling_rate, cooling_type, adaptive_factor)
 
     for iteration in range(montecarlo_iteration):
-        random_Search_solution, random_Search_cost = random_Search.optimize()
-        Helper.save_to_csv(f'random_search_{montecarlo_iteration}', iteration, random_Search_solution, random_Search_cost)
-        if random_Search_cost < best_random_cost:
-            best_random_solution = random_Search_solution.copy()
-            best_random_cost = random_Search_cost
+        # random_Search_solution, random_Search_cost = random_Search.optimize()
+        # Helper.save_to_csv(f'random_search_{montecarlo_iteration}', iteration, random_Search_solution, random_Search_cost)
+        # if random_Search_cost < best_random_cost:
+        #     best_random_solution = random_Search_solution.copy()
+        #     best_random_cost = random_Search_cost
 
-        hill_climbing_solution, hill_climbing_cost = hill_climbing.optimize()
-        Helper.save_to_csv(f'hill_climbing_{montecarlo_iteration}', iteration, hill_climbing_solution, hill_climbing_cost)
-        if hill_climbing_cost < best_climbing_hill_cost:
-            best_climbing_hill_solution = hill_climbing_solution.copy()
-            best_climbing_hill_cost = hill_climbing_cost
+        # hill_climbing_solution, hill_climbing_cost = hill_climbing.optimize()
+        # Helper.save_to_csv(f'hill_climbing_{montecarlo_iteration}', iteration, hill_climbing_solution, hill_climbing100_cost)
+        # if hill_climbing_cost < best_climbing_hill_cost:
+        #     best_climbing_hill_solution = hill_climbing_solution.copy()
+        #     best_climbing_hill_cost = hill_climbing_cost
 
         simulated_annealing_solution, simulated_annealing_cost = simulated_annealing.optimize()
         Helper.save_to_csv(f'simulated_annealing_{montecarlo_iteration}', iteration, simulated_annealing_solution, simulated_annealing_cost)
@@ -55,8 +55,8 @@ if __name__ == "__main__":
             best_simulated_annealing_solution = simulated_annealing_solution.copy()
             best_simulated_annealing_cost = simulated_annealing_cost
 
-    Helper().plot_solution(best_random_solution, best_climbing_hill_solution, best_simulated_annealing_solution)
+    # Helper().plot_solution(best_random_solution, best_climbing_hill_solution, best_simulated_annealing_solution)
 
-    print("Meilleure solution Random Search: ", best_random_solution, "Coût: ", best_random_cost)
-    print("Meilleure solution Hill Climbing: ", best_climbing_hill_solution, "Coût: ", best_climbing_hill_cost)
-    print("Meilleure solution Simulated Annealing: ", best_simulated_annealing_solution, "Coût: ", best_simulated_annealing_cost)
+    # print("Meilleure solution Random Search: ", best_random_solution, "Coût: ", best_random_cost)
+    # print("Meilleure solution Hill Climbing: ", best_climbing_hill_solution, "Coût: ", best_climbing_hill_cost)
+    # print("Meilleure solution Simulated Annealing: ", best_simulated_annealing_solution, "Coût: ", best_simulated_annealing_cost)

@@ -74,29 +74,22 @@ class SpringDesign:
         for i in range(len(x)):
             lower, upper = self.bounds[i]
             if x[i] < lower:
-                penalty += (lower - x[i])
+                penalty += (lower - x[i]) * 20
             elif x[i] > upper:
-                penalty += (x[i] - upper)
+                penalty += (x[i] - upper) * 20
 
         g1_penalty = self.__calcul_g1(x)
         if g1_penalty > 0:
-            penalty += g1_penalty
+            penalty += g1_penalty * 20
         g2_penalty = self.__calcul_g2(x)
         if g2_penalty > 0:
-            penalty += g2_penalty
+            penalty += g2_penalty * 20
         g3_penalty = self.__calcul_g3(x)
         if g3_penalty > 0:
-            penalty += g3_penalty
+            penalty += g3_penalty * 20
         g4_penalty = self.__calcul_g4(x)
         if g4_penalty > 0:
-            penalty += g4_penalty
+            penalty += g4_penalty * 20
 
         cost = x[0]**2 * x[1] + (2 + x[2])
-        return cost + (penalty ** 2)
-
-
-    def generate_valid_random_solution(self):
-        while True:
-            solution = self.generate_random_solution()
-            if self.is_valid(solution):
-                return solution
+        return cost + penalty
