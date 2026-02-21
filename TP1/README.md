@@ -1,51 +1,67 @@
 ## Structure du Projet
 
-- **discretisation.py** : Contient la classe `Discretisation` qui implémente l'algorithme de discrétisation des couleurs pour les images. Elle inclut des méthodes pour traiter les images et appliquer la technique de discrétisation.
-  
-- **main.py** : Le point d'entrée principal de l'application. Il gère le chargement des images depuis le répertoire `in`, permet l'interaction avec l'utilisateur pour sélectionner les images, et sauvegarde les images discrétisées dans le répertoire `out`.
+Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : Random Search, Hill Climbing, et Simulated Annealing.
 
-- **in/** : Ce répertoire est destiné à contenir les images d'entrée qui seront traitées par l'application.
+- **spring_design.py** : Classe principale définissant le problème d'optimisation avec la fonction objectif et les contraintes.
 
-- **out/** : Ce répertoire est destiné à stocker les images de sortie après leur traitement et discrétisation.
+- **random_search.py** : Implémente l'algorithme Random Search pour explorer l'espace de solutions aléatoirement.
+
+- **hill_climbing.py** : Implémente l'algorithme Hill Climbing avec génération de voisinage et détection de stagnation.
+
+- **simulated_annealing.py** : Implémente le Recuit Simulé avec plusieurs stratégies de refroidissement (exponentiel, linéaire, logarithmique).
+
+- **helper.py** : Classe utilitaire contenant des fonctions pour l'entrée utilisateur, la sauvegarde des résultats en CSV et la visualisation 3D des solutions.
+
+- **main.py** : Point d'entrée principal qui coordonne l'exécution des trois algorithmes sur plusieurs itérations Monte-Carlo.
+
+- **results/** : Répertoire contenant les fichiers CSV avec les résultats et le graphique de visualisation.
 
 ## Utilisation
 
-1. Placez vos images d'entrée dans le répertoire `in`.
-2. Exécutez le script `main.py` pour démarrer l'application.
-3. Suivez les instructions pour sélectionner une image et spécifier le nombre de couleurs pour la discrétisation.
-4. Les images traitées seront sauvegardées dans le répertoire `out`.
-
-## Prérequis
-
-- Python 3.13.11
-- Bibliothèque Pillow (pip install Pillow)
-
-
-## Création d'un environnement virtuel
-
-Pour isoler les dépendances de votre projet, il est recommandé de créer un environnement virtuel.
-
-1. Créez un environnement virtuel nommé `.venv` :
-   ```
-   python3 -m venv .venv
-   ```
-
-2. Activez l'environnement virtuel :
+1. Activez l'environnement virtuel :
    - Sur Linux/Mac :
      ```
      source .venv/bin/activate
      ```
    - Sur Windows :
      ```
-     .env\Scripts\activate
+     .venv\Scripts\activate
      ```
 
-3. Installez les dépendances nécessaires dans l'environnement virtuel :
+2. Exécutez le script principal :
+   ```
+   python main.py
+   ```
+
+3. Suivez les instructions pour configurer :
+   - Nombre de simulations Monte-Carlo
+   - Paramètres du Random Search
+   - Paramètres du Hill Climbing (variation, voisinage, stagnation)
+   - Paramètres du Simulated Annealing (température, refroidissement)
+
+4. Les résultats seront sauvegardés dans le répertoire `results/`.
+
+## Prérequis
+
+- Python 3.13.11
+- numpy
+- matplotlib
+- scipy
+
+## Configuration de l'environnement virtuel
+
+1. Créez un environnement virtuel :
+   ```
+   python3 -m venv .venv
+   ```
+
+2. Activez-le et installez les dépendances :
    ```
    pip install -r requirements.txt
    ```
 
-4. Pour désactiver l'environnement virtuel, utilisez la commande suivante :
+3. Pour désactiver :
    ```
    deactivate
    ```
+

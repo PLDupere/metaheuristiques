@@ -47,6 +47,7 @@ class HillClimbing:
                 if current_cost < best_cost:
                     best_solution = current.copy()
                     best_cost = current_cost
+                    Helper.save_to_csv("hill_climbing_results", iteration, best_solution, best_cost)
                     print("New best:", best_cost)
 
                 stagnation_counter = 0

@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from helper import Helper
 from spring_design import SpringDesign
 
 
@@ -52,6 +53,7 @@ class SimulatedAnnealing:
                     best_solution = current_solution.copy()
                     best_cost = current_cost
                     stagnation_counter = 0
+                    Helper.save_to_csv("simulated_annealing_results", iteration, best_solution, best_cost)
                     print(f"Nouvelle meilleure: {best_solution} coût={best_cost:.12f}")
 
             if abs(delta) > self.stagnation_value:
@@ -67,7 +69,7 @@ class SimulatedAnnealing:
 
     def __cooling_strategy(self, iteration, temperature):
         if self.cooling_type == "exponential":
-            temperature *= self.cooling_rate
+            temperature *= self.initial_temperature
         elif self.cooling_type == "linear":
             temperature = self.initial_temperature * (1 - iteration / self.max_iterations)
         elif self.cooling_type == "logarithmic":

@@ -23,6 +23,7 @@ class RandomSearch:
                     if cost < best_cost:
                         best_solution = solution.copy()
                         best_cost = cost
+                        Helper.save_to_csv("random_search_results", iteration, best_solution, best_cost)
                         print(f"Nouvelle meilleure solution: {best_solution} coût: {best_cost}")
 
         return best_solution, best_cost
