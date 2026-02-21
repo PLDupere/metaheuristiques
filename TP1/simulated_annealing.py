@@ -69,7 +69,7 @@ class SimulatedAnnealing:
 
     def __cooling_strategy(self, iteration, temperature):
         if self.cooling_type == "exponential":
-            temperature *= self.initial_temperature
+            temperature *= self.cooling_rate
         elif self.cooling_type == "linear":
             temperature = self.initial_temperature * (1 - iteration / self.max_iterations)
         elif self.cooling_type == "logarithmic":
