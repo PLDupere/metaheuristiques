@@ -1,6 +1,7 @@
 
 # Library files
 bin/
+.lib/
 lib/
 include/
 lib64/
