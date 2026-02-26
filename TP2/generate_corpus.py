@@ -1,5 +1,6 @@
 from zipfile import ZipFile
 import requests
+import os
 
 
 def generate_dictionary():
@@ -29,7 +30,9 @@ def generate_dictionary():
         zf.extract("Lexique383.tsv", path=r"lexique")
 
     # j'aurais aimé le mettre dedans, mais c'est fastidieux niveau encodage
-    with open(r"lexique\Lexique383.tsv", mode="r", encoding="utf8") as f:
+    #FIXME:
+    # with open(r"lexique\Lexique383.tsv", mode="r", encoding="utf8") as f:
+    with open("lexique/Lexique383.tsv", mode="r", encoding="utf8") as f:
         f.readline()
 
         dictio = sorted(list(set([l.split()[0] for l in f.readlines()])))

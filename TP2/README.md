@@ -8,5 +8,7 @@ L'utilisation du code requiert la librairie nltk
 
 ```
 pip install nltk
+pip install numpy
+pip install requests
 
 ```
