@@ -30,7 +30,7 @@ trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
 
 
 
-words = Helper.generate_words(Helper.alphabet_autorise, longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
+words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
 
 
 
@@ -43,6 +43,9 @@ ga_instance.print_parameters()
 
 cross_result_single = ga_instance.crossover_single_point(words)
 print("Résultat du crossover à point unique:", cross_result_single)
+
+cross_result_multi = ga_instance.crossover_two_points(words)
+print("Résultat du crossover à points multiples:", cross_result_multi)
 
 eda_instance = EDA("parameters.yaml")
 
