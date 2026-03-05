@@ -1,7 +1,12 @@
 ---
 parameters_ga:
-  population_size: 500
-  mutation_rate: 0.2
+  population_size: 50
+  franciosite: 9.5
+  mutation_rate: 1.2
+  elitisme: 1 # nombre generation, 0 pour désactiver
+  etalon: True
+  losers: False
+  reseed: False
 ---
 parameters_eda:
   population_size: 500

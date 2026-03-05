@@ -14,9 +14,16 @@ class Helper:
         while len(valid_words) < number_of_words:
             word_length = randint(longueur_min, longueur_max)
             word = ''.join(choice(Helper.get_alphabet()) for _ in range(word_length))
-            if not Helper.__avoid_repetition_excessive(word) and not Helper.__avoid_word_in_dictionary(word, dictionnaire):
+            if Helper.is_valid_word(word, dictionnaire):
                 valid_words.append(word)
         return valid_words
+
+
+    @staticmethod
+    def is_valid_word(word, dictionnaire):
+        if not Helper.__avoid_repetition_excessive(word) and not Helper.__avoid_word_in_dictionary(word, dictionnaire):
+            return True
+        return False
 
 
     @staticmethod
