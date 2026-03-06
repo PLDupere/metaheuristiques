@@ -5,8 +5,8 @@ parameters_ga:
   mutation_rate: 1.2
   elitisme: 1 # nombre generation, 0 pour désactiver
   etalon: True
-  losers: False
-  reseed: False
+  losers: True
+  reseed: True
 ---
 parameters_eda:
   population_size: 500

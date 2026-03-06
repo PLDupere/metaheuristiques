@@ -14,14 +14,8 @@ import generate_corpus
 from helper import Helper
 
 
-#%%
-# voici une brève démonstration de l'utilisation du code fourni
-
-dictionnaire = generate_corpus.generate_dictionary() # peut prendre un peu de temps
-
-# dans notre cas, on va bâtir bêtement le corpus directement à partir du dictionnaire traité
+dictionnaire = generate_corpus.generate_dictionary()
 corpus_entraînement = dictionnaire
-
 trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
 
 words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
@@ -31,13 +25,11 @@ ga_instance2 = GA("parameters.yaml")
 ga_instance3 = GA("parameters.yaml")
 
 mutation_results = ga_instance1.mutation(words, trigram_model, dictionnaire)
-
 single_results = ga_instance2.crossover_single_point(words, trigram_model, dictionnaire)
-
 multi_results= ga_instance3.crossover_multi_points(words, trigram_model, dictionnaire)
 
 
-# eda_instance = EDA("parameters.yaml")
+eda_instance = EDA("parameters.yaml")
 
 
 # mots = ['bonjour', 'jourbon', 'manger', 'aaaaa', 'allo', 'gfsaa']

@@ -20,6 +20,7 @@ class GA:
 
     def mutation(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
+        losers = []
         while True:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
@@ -50,15 +51,30 @@ class GA:
             child2_results = gen_lm.perplexité(mot=child2, trigram_model=trigram_model)
 
             if child1_results < self.franciosite and Helper.is_valid_word(child1, dictionnaire):
+                if self.reseed == True and child1_results < self.franciosite - 5:
+                    continue
                 print(f"{child1}: {child1_results}")
                 results.append(child1)
             if child2_results < self.franciosite and Helper.is_valid_word(child2, dictionnaire):
+                if self.reseed == True and child2_results < self.franciosite - 5:
+                    continue
                 print(f"{child2}: {child2_results}")
                 results.append(child2)
+            if self.losers == True and child1_results <= self.franciosite + 5 and Helper.is_valid_word(child1, dictionnaire):
+                print(f" LOOSER :{child1}: {child1_results}")
+                losers.append(child1)
+            if self.losers == True and child2_results <= self.franciosite + 5 and Helper.is_valid_word(child2, dictionnaire):
+                print(f"LOOSER : {child2}: {child2_results}")
+                results.append(child2)
+
             if len(results) >= self.population_size:
                 if self.elitisme == 0:
                     return results
                 else:
+                    if self.losers == True and len(losers) > 0:
+                        num_losers_to_insert = int(self.population_size * 0.1)
+                        for _ in range(min(num_losers_to_insert, len(losers))):
+                            results.insert(random.randint(0, len(results)), random.choice(losers))
                     self.elitisme = self.elitisme - 1
                     self.franciosite = self.franciosite - 1
                     if self.etalon == True:
@@ -73,6 +89,7 @@ class GA:
 
     def crossover_single_point(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
+        losers = []
         while True:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
@@ -85,16 +102,30 @@ class GA:
             child1_results = gen_lm.perplexité(mot=child1, trigram_model=trigram_model)
             child2_results = gen_lm.perplexité(mot=child2, trigram_model=trigram_model)
             if child1_results < self.franciosite and Helper.is_valid_word(child1, dictionnaire):
+                if self.reseed == True and child1_results < self.franciosite - 5:
+                    continue
                 print(f"{child1}: {child1_results}")
                 results.append(child1)
             if child2_results < self.franciosite and Helper.is_valid_word(child2, dictionnaire):
+                if self.reseed == True and child2_results < self.franciosite - 5:
+                    continue
                 print(f"{child2}: {child2_results}")
                 results.append(child2)
+            if self.losers == True and child1_results <= self.franciosite + 5 and Helper.is_valid_word(child1, dictionnaire):
+                print(f" LOOSER :{child1}: {child1_results}")
+                losers.append(child1)
+            if self.losers == True and child2_results <= self.franciosite + 5 and Helper.is_valid_word(child2, dictionnaire):
+                print(f"LOOSER : {child2}: {child2_results}")
+                losers.append(child2)
             if len(results) >= self.population_size:
 
                 if self.elitisme == 0:
                     return results
                 else:
+                    if self.losers == True and len(losers) > 0:
+                        num_losers_to_insert = int(self.population_size * 0.1)
+                        for _ in range(min(num_losers_to_insert, len(losers))):
+                            results.insert(random.randint(0, len(results)), random.choice(losers))
                     self.elitisme = self.elitisme - 1
                     self.franciosite = self.franciosite - 1
                     if self.etalon == True:
@@ -109,6 +140,7 @@ class GA:
 
     def crossover_multi_points(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
+        losers = []
         while True:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
@@ -132,15 +164,29 @@ class GA:
             child1_results = gen_lm.perplexité(mot=child1, trigram_model=trigram_model)
             child2_results = gen_lm.perplexité(mot=child2, trigram_model=trigram_model)
             if child1_results < self.franciosite and Helper.is_valid_word(child1, dictionnaire):
+                if self.reseed == True and child1_results < self.franciosite - 5:
+                    continue
                 print(f"{child1}: {child1_results}")
                 results.append(child1)
             if child2_results < self.franciosite and Helper.is_valid_word(child2, dictionnaire):
+                if self.reseed == True and child2_results < self.franciosite - 5:
+                    continue
                 print(f"{child2}: {child2_results}")
                 results.append(child2)
+            if self.losers == True and child1_results <= self.franciosite + 5 and Helper.is_valid_word(child1, dictionnaire):
+                print(f" LOOSER :{child1}: {child1_results}")
+                losers.append(child1)
+            if self.losers == True and child2_results <= self.franciosite + 5 and Helper.is_valid_word(child2, dictionnaire):
+                print(f"LOOSER : {child2}: {child2_results}")
+                losers.append(child2)
             if len(results) >= self.population_size:
                 if self.elitisme == 0:
                     return results
                 else:
+                    if self.losers == True and len(losers) > 0:
+                        num_losers_to_insert = int(self.population_size * 0.1)
+                        for _ in range(min(num_losers_to_insert, len(losers))):
+                            results.insert(random.randint(0, len(results)), random.choice(losers))
                     self.elitisme = self.elitisme - 1
                     self.franciosite = self.franciosite - 1
                     if self.etalon == True:
