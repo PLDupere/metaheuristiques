@@ -9,4 +9,7 @@ parameters_ga:
   reseed: True
 ---
 parameters_eda:
-  population_size: 500
+  population_size: 50
+  franciosite: 5.5
+  selection_ratio: 0.5
+  learning_rate: 0.1

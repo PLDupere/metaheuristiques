@@ -20,23 +20,17 @@ trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
 
 words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
 
-ga_instance1 = GA("parameters.yaml")
-ga_instance2 = GA("parameters.yaml")
-ga_instance3 = GA("parameters.yaml")
+# ga_instance1 = GA("parameters.yaml")
+# ga_instance2 = GA("parameters.yaml")
+# ga_instance3 = GA("parameters.yaml")
 
-mutation_results = ga_instance1.mutation(words, trigram_model, dictionnaire)
-single_results = ga_instance2.crossover_single_point(words, trigram_model, dictionnaire)
-multi_results= ga_instance3.crossover_multi_points(words, trigram_model, dictionnaire)
+# mutation_results = ga_instance1.mutation(words, trigram_model, dictionnaire)
+# single_results = ga_instance2.crossover_single_point(words, trigram_model, dictionnaire)
+# multi_results= ga_instance3.crossover_multi_points(words, trigram_model, dictionnaire)
+
+eda_instance1 = EDA("parameters.yaml")
+
+umda_result = eda_instance1.UMDA(words, trigram_model, dictionnaire)
+print(f"UMDA Best: {umda_result}")
 
 
-eda_instance = EDA("parameters.yaml")
-
-
-# mots = ['bonjour', 'jourbon', 'manger', 'aaaaa', 'allo', 'gfsaa']
-
-# %%
-# for mot in mots:
-#     ppl = gen_lm.perplexité(mot=mot, trigram_model=trigram_model)
-#     print(f"{mot}: {ppl}")
-
-# %%

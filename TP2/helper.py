@@ -1,5 +1,4 @@
-
-
+from nltk.probability import FreqDist
 from random import choice, randint, random
 
 
@@ -33,11 +32,13 @@ class Helper:
                 return True
         return False
 
+
     @staticmethod
     def __avoid_word_in_dictionary(word, dictionnaire):
         if dictionnaire is not None:
             return word in dictionnaire
         return False
+
 
     @staticmethod
     def get_alphabet():
@@ -49,3 +50,14 @@ class Helper:
         return alphabet_autorise
 
 
+    @staticmethod
+    def build_letter_probabilities(words, alphabet):
+        letters = []
+        for w in words:
+            letters.extend(list(w))
+        fdist = FreqDist(letters)
+        total = sum(fdist.values())
+        probs = []
+        for letter in alphabet:
+            probs.append(fdist[letter] / total if total > 0 else 0)
+        return probs

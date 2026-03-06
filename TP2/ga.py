@@ -1,8 +1,8 @@
 import random
 import yaml
-
 import gen_lm
 from helper import Helper
+
 
 class GA:
     def __init__(self, yaml_file):
