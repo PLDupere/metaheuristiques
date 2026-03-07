@@ -13,14 +13,13 @@ class EDA_UMDA:
         self.selection_ratio = self.parameters_eda['selection_ratio']
         self.learning_rate = self.parameters_eda['learning_rate']
         self.franciosite = self.parameters_eda['franciosite']
-        self.output_file = self.parameters_eda['output_file']
         self.min_word_length = 4
         self.max_word_length = 16
         self.alphabet = Helper.get_alphabet()
         self.alphabet_size = len(self.alphabet)
         self.letter_to_idx = {c: i for i, c in enumerate(self.alphabet)}
 
-    def UMDA(self, words, trigram_model, dictionnaire, iteration=0):
+    def UMDA(self, words, trigram_model, dictionnaire):
         population = [(w, Helper.calculate_perplexity(w, trigram_model)) for w in words]
         population = sorted(population, key=lambda x: x[1])[:self.population_size]
         results = []
@@ -71,10 +70,10 @@ class EDA_UMDA:
             population = sorted(new_population, key=lambda x: x[1])
             for word, fitness in population:
                 if fitness < self.franciosite and Helper.is_valid_word(word, dictionnaire):
-                    print(f"{word}: {fitness}")
+                    # print(f"{word}: {fitness}")
                     results.append(word)
+                    break
 
             if len(results) >= self.population_size:
-                Helper.save_results("UMDA", results, self.output_file, trigram_model, iteration)
                 return results[:self.population_size]
 
