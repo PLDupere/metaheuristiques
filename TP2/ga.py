@@ -22,7 +22,6 @@ class GA:
         self.output_file = self.parameters_ga['output_file']
 
 
-
     def mutation(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
         losers = []
@@ -30,8 +29,9 @@ class GA:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
             else:
-                parent1 = random.choice(words)
-            parent2 = random.choice(words)
+                parent1 = Helper.tournament_selection(words, tournament_size=3, trigram_model=trigram_model)
+            parent2 = Helper.tournament_selection(words, tournament_size=3 , trigram_model=trigram_model)
+
             avg_length = (len(parent1) + len(parent2)) / 2
             num_mutations = int(avg_length * self.mutation_rate)
 
@@ -85,8 +85,8 @@ class GA:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
             else:
-                parent1 = random.choice(words)
-            parent2 = random.choice(words)
+                parent1 = Helper.tournament_selection(words, tournament_size=3, trigram_model=trigram_model)
+            parent2 = Helper.tournament_selection(words, tournament_size=3, trigram_model=trigram_model)
 
             for _ in range(self.number_of_children):
                 point = random.randint(1, len(parent1) - 1)
@@ -112,6 +112,7 @@ class GA:
                         return results
                     else:
                         if self.reseed == True:
+                            # FIXME: reseed keep big values
                             seeds = Helper.generate_words(4,16, self.number_of_reseeds, dictionnaire)
                             results.extend(seeds)
                         if self.losers == True and len(losers) > 0:
@@ -136,8 +137,8 @@ class GA:
             if self.etalon == True and etalon is not None:
                 parent1 = etalon
             else:
-                parent1 = random.choice(words)
-            parent2 = random.choice(words)
+                parent1 = Helper.tournament_selection(words, tournament_size=3, trigram_model=trigram_model)
+            parent2 = Helper.tournament_selection(words, tournament_size=3, trigram_model=trigram_model)
             max_len = min(len(parent1), len(parent2))
             for _ in range(self.number_of_children):
                 point1, point2, point3= sorted(random.sample(range(1, max_len), 3))

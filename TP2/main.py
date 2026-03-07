@@ -10,46 +10,27 @@ from eda import EDA
 import gen_lm
 import generate_corpus
 from helper import Helper
+import yaml
 
-dictionnaire = generate_corpus.generate_dictionary()
-corpus_entraînement = dictionnaire
-trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
+with open("parameters.yaml", 'r') as file:
+    documents = list(yaml.safe_load_all(file))
+number_of_iterations = documents[2]['parameters_general']['number_of_iterations']
+number_of_words_to_generate = documents[2]['parameters_general']['number_of_words_to_generate']
 
-words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
+for iteration in range(number_of_iterations):
+    dictionnaire = generate_corpus.generate_dictionary()
+    corpus_entraînement = dictionnaire
+    trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
+    words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=number_of_words_to_generate, dictionnaire=dictionnaire)
 
-# Initialisation des instances GA et EDA
-ga_instance1 = GA("parameters.yaml")
-ga_instance2 = GA("parameters.yaml")
-ga_instance3 = GA("parameters.yaml")
-eda_instance1 = EDA("parameters.yaml")
+    ga_instance1 = GA("parameters.yaml")
+    ga_instance2 = GA("parameters.yaml")
+    ga_instance3 = GA("parameters.yaml")
+    eda_instance1 = EDA("parameters.yaml")
 
-# Boucle pour 100 itérations
-for iteration in range(100):
     mutation_results = ga_instance1.mutation(words, trigram_model, dictionnaire)
     single_results = ga_instance2.crossover_single_point(words, trigram_model, dictionnaire)
     multi_results = ga_instance3.crossover_multi_points(words, trigram_model, dictionnaire)
     umda_result = eda_instance1.UMDA(words, trigram_model, dictionnaire)
-
-
-
-
-# dictionnaire = generate_corpus.generate_dictionary()
-# corpus_entraînement = dictionnaire
-# trigram_model = gen_lm.build_trigram_model(corpus_entraînement)
-
-# words = Helper.generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=dictionnaire)
-
-# ga_instance1 = GA("parameters.yaml")
-# ga_instance2 = GA("parameters.yaml")
-# ga_instance3 = GA("parameters.yaml")
-
-# mutation_results = ga_instance1.mutation(words, trigram_model, dictionnaire)
-# single_results = ga_instance2.crossover_single_point(words, trigram_model, dictionnaire)
-# multi_results= ga_instance3.crossover_multi_points(words, trigram_model, dictionnaire)
-
-# eda_instance1 = EDA("parameters.yaml")
-
-# umda_result = eda_instance1.UMDA(words, trigram_model, dictionnaire)
-
 
 

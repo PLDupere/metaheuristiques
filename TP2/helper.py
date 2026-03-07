@@ -1,7 +1,7 @@
 from nltk.probability import FreqDist
-from random import choice, randint, random
+from random import choice, randint
+import random
 import csv
-
 import gen_lm
 
 
@@ -87,3 +87,29 @@ class Helper:
             for mot in results:
                 value = Helper.calculate_perplexity(mot, trigram_model)
                 writer.writerow([algorithme, mot, value])
+
+
+    @staticmethod
+    def tournament_selection(words, tournament_size=3, trigram_model=None):
+        selected = random.choices(words, k=tournament_size)
+        parent = min(selected, key=lambda word: Helper.calculate_perplexity(word, trigram_model))
+        return parent
+
+
+    @staticmethod
+    def wheel_selection(words, trigram_model=None):
+        perplexities = [Helper.calculate_perplexity(word, trigram_model) for word in words]
+        fitness = [1 / p for p in perplexities]
+        total_fitness = sum(fitness)
+        probabilities = [f / total_fitness for f in fitness]
+        parent = random.choices(words, weights=probabilities)[0]
+        return parent
+
+
+    @staticmethod
+    def rank_selection(words, trigram_model=None):
+        ranked_words = sorted(words, key=lambda word: Helper.calculate_perplexity(word, trigram_model))
+        total_ranks = sum(range(1, len(ranked_words) + 1))
+        probabilities = [(len(ranked_words) - i) / total_ranks for i in range(len(ranked_words))]
+        parent = random.choices(ranked_words, weights=probabilities)[0]
+        return parent
