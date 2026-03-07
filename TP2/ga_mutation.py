@@ -11,7 +11,7 @@ class GA_mutation:
         self.elitisme = self.parameters_ga['elitisme']
         self.etalon = self.parameters_ga['etalon']
         self.losers = self.parameters_ga['losers']
-        self.number_of_loosers = self.parameters_ga['number_of_loosers']
+        self.number_of_losers = self.parameters_ga['number_of_losers']
         self.reseed = self.parameters_ga['reseed']
         self.number_of_reseeds = self.parameters_ga['number_of_reseeds']
         self.mutation_rate = self.parameters_ga['mutation_rate']
@@ -57,14 +57,14 @@ class GA_mutation:
 
             if len(results) >= self.population_size:
                 if self.elitisme == 0:
-                    Helper.save_results("Mutation", results, self.output_file, trigram_model)
+                    Helper.save_results("Mutation", results, self.output_file, trigram_model, iteration)
                     return results
                 else:
                     if self.reseed == True:
                         seeds = Helper.generate_words(4,16, self.number_of_reseeds, dictionnaire)
                         results.extend(seeds)
                     if self.losers == True and len(losers) > 0:
-                        for _ in range(min(self.number_of_loosers, len(losers))):
+                        for _ in range(min(self.number_of_losers, len(losers))):
                             results.insert(random.randint(0, len(results)), random.choice(losers))
                     self.elitisme = self.elitisme - 1
                     self.franciosite = self.franciosite - self.franciosite_diminution_by_generation

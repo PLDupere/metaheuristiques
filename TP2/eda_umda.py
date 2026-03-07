@@ -20,7 +20,7 @@ class EDA_UMDA:
         self.alphabet_size = len(self.alphabet)
         self.letter_to_idx = {c: i for i, c in enumerate(self.alphabet)}
 
-    def UMDA(self, words, trigram_model, dictionnaire):
+    def UMDA(self, words, trigram_model, dictionnaire, iteration=0):
         population = [(w, Helper.calculate_perplexity(w, trigram_model)) for w in words]
         population = sorted(population, key=lambda x: x[1])[:self.population_size]
         results = []
@@ -75,6 +75,6 @@ class EDA_UMDA:
                     results.append(word)
 
             if len(results) >= self.population_size:
-                Helper.save_results("UMDA", results, self.output_file, trigram_model)
+                Helper.save_results("UMDA", results, self.output_file, trigram_model, iteration)
                 return results[:self.population_size]
 

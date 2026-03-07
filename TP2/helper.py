@@ -3,10 +3,10 @@ from random import choice, randint
 import random
 import csv
 import gen_lm
+import os
 
 
 class Helper:
-
     @staticmethod
     def generate_words(longueur_min=4, longueur_max=16, number_of_words=500, dictionnaire=None):
         start_symbol = "<s>"
@@ -73,6 +73,7 @@ class Helper:
 
     @staticmethod
     def save_results(algorithme, results, output_file, trigram_model, iteration=0):
+        os.makedirs('results', exist_ok=True)
         with open(f"results/{output_file}", 'a', newline='') as f:
             writer = csv.writer(f)
             if f.tell() == 0:
