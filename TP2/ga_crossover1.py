@@ -20,10 +20,9 @@ class GA_crossover1:
         self.population_size = self.parameters_ga['population_size']
         self.number_of_children = self.parameters_ga['number_of_children']
         self.crossover_rate = self.parameters_ga['crossover_rate']
-        self.output_file = self.parameters_ga['output_file']
 
 
-    def crossover_single_point(self, words, trigram_model, dictionnaire, etalon=None, iteration=0):
+    def crossover_single_point(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
         losers = []
         children = []
@@ -45,16 +44,15 @@ class GA_crossover1:
                 for i in children:
                     child_results = Helper.calculate_perplexity(i, trigram_model)
                     if child_results < self.franciosite and Helper.is_valid_word(i, dictionnaire):
-                        print(f"{i}: {child_results}")
+                        # print(f"{i}: {child_results}")
                         results.append(i)
                         continue
                     if self.losers and child_results <= self.franciosite + 5 and Helper.is_valid_word(i, dictionnaire):
-                        print(f"{i}: {child_results}")
+                        # print(f"{i}: {child_results} - LOSER")
                         losers.append(i)
                 children = []
                 if len(results) >= self.population_size:
                     if self.elitisme == 0:
-                        Helper.save_results("Crossover Single Point", results, self.output_file, trigram_model, iteration)
                         return results
                     else:
                         if self.reseed == True:

@@ -6,11 +6,13 @@ import gen_lm
 import generate_corpus
 from helper import Helper
 import yaml
+import time
 
 with open("parameters.yaml", 'r') as file:
     documents = list(yaml.safe_load_all(file))
 number_of_iterations = documents[2]['parameters_general']['number_of_iterations']
 number_of_words_to_generate = documents[2]['parameters_general']['number_of_words_to_generate']
+output_file = documents[2]['parameters_general']['output_file']
 
 for iteration in range(number_of_iterations):
     dictionnaire = generate_corpus.generate_dictionary()
@@ -23,7 +25,27 @@ for iteration in range(number_of_iterations):
     genetic_algorithm_crossover_tournament_selection = GA_crossover2("parameters.yaml")
     estimation_distribution_algorithm_univariate_distribution_algorithm = EDA_UMDA("parameters.yaml")
 
-    genetic_algorithm_mutation_tournament_selection.mutation(words, trigram_model, dictionnaire, iteration)
-    genetic_algorithm_crossover_wheel_selection.crossover_single_point(words, trigram_model, dictionnaire, iteration)
-    genetic_algorithm_crossover_tournament_selection.crossover_multi_points(words, trigram_model, dictionnaire, iteration)
-    estimation_distribution_algorithm_univariate_distribution_algorithm.UMDA(words, trigram_model, dictionnaire, iteration)
+    start = time.perf_counter()
+    mutation= genetic_algorithm_mutation_tournament_selection.mutation(words, trigram_model, dictionnaire)
+    end = time.perf_counter()
+    Helper.save_results("Mutation", mutation, output_file, trigram_model, iteration)
+    print(f"Mutation selection time: {end - start:.4f} seconds")
+
+    start = time.perf_counter()
+    crossover_single = genetic_algorithm_crossover_wheel_selection.crossover_single_point(words, trigram_model, dictionnaire)
+    end = time.perf_counter()
+    Helper.save_results("Crossover Single Point", crossover_single, output_file, trigram_model, iteration)
+    print(f"Crossover single point time: {end - start:.4f} s")
+
+    start = time.perf_counter()
+    crossover_multi = genetic_algorithm_crossover_tournament_selection.crossover_multi_points(words, trigram_model, dictionnaire)
+    end = time.perf_counter()
+    Helper.save_results("Crossover Multi Points", crossover_multi, output_file, trigram_model, iteration)
+    print(f"Crossover multi points time: {end - start:.4f} s")
+
+    start = time.perf_counter()
+    umda = estimation_distribution_algorithm_univariate_distribution_algorithm.UMDA(words, trigram_model, dictionnaire)
+    end = time.perf_counter()
+    Helper.save_results("UMDA", umda, output_file, trigram_model, iteration)
+    print(f"UMDA time: {end - start:.4f} s")
+    print(f"Iteration {iteration + 1} completed\n")

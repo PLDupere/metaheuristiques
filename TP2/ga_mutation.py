@@ -20,10 +20,9 @@ class GA_mutation:
         self.population_size = self.parameters_ga['population_size']
         self.number_of_children = self.parameters_ga['number_of_children']
         self.crossover_rate = self.parameters_ga['crossover_rate']
-        self.output_file = self.parameters_ga['output_file']
 
 
-    def mutation(self, words, trigram_model, dictionnaire, etalon=None, iteration=0):
+    def mutation(self, words, trigram_model, dictionnaire, etalon=None):
         results = []
         losers = []
         while True:
@@ -49,15 +48,14 @@ class GA_mutation:
                 child = ''.join(mutated_child)
                 child_results = Helper.calculate_perplexity(child, trigram_model)
                 if child_results < self.franciosite and Helper.is_valid_word(child, dictionnaire):
-                    print(f"{child}: {child_results}")
+                    # print(f"{child}: {child_results}")
                     results.append(child)
                 if self.losers == True and child_results <= self.franciosite + 5 and Helper.is_valid_word(child, dictionnaire):
-                    print(f"{child}: {child_results}")
+                    # print(f"{child}: {child_results} - LOSER")
                     losers.append(child)
 
             if len(results) >= self.population_size:
                 if self.elitisme == 0:
-                    Helper.save_results("Mutation", results, self.output_file, trigram_model, iteration)
                     return results
                 else:
                     if self.reseed == True:
