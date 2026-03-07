@@ -130,3 +130,9 @@ dmypy.json
 
 # VSCode
 .vscode/
+
+# Code Spell
+.cspell.jsonc
+
+# results
+results/

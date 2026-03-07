@@ -3,7 +3,7 @@ import random
 from helper import Helper
 
 
-class EDA:
+class EDA_UMDA:
 
     def __init__(self, yaml_file):
         with open(yaml_file, 'r') as file:

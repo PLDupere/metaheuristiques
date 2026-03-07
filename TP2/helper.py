@@ -67,26 +67,19 @@ class Helper:
 
 
     @staticmethod
-    def save_results(results, output_file):
-        with open(output_file, 'a') as f:
-            for word in results:
-                f.write(f"{word}\n")
-
-
-    @staticmethod
     def calculate_perplexity(word, trigram_model):
         return gen_lm.perplexité(mot=word, trigram_model=trigram_model)
 
 
     @staticmethod
-    def save_results(algorithme, results, output_file, trigram_model):
-        with open(output_file, 'a', newline='') as f:
+    def save_results(algorithme, results, output_file, trigram_model, iteration=0):
+        with open(f"results/{output_file}", 'a', newline='') as f:
             writer = csv.writer(f)
             if f.tell() == 0:
-                writer.writerow(['algorithme', 'mot', 'valeur'])
+                writer.writerow(['algorithme', 'iteration', 'mot', 'valeur'])
             for mot in results:
                 value = Helper.calculate_perplexity(mot, trigram_model)
-                writer.writerow([algorithme, mot, value])
+                writer.writerow([algorithme, iteration, mot, value])
 
 
     @staticmethod
