@@ -1,6 +1,5 @@
 import yaml
 import random
-import gen_lm
 from helper import Helper
 
 
@@ -14,6 +13,7 @@ class EDA:
         self.selection_ratio = self.parameters_eda['selection_ratio']
         self.learning_rate = self.parameters_eda['learning_rate']
         self.franciosite = self.parameters_eda['franciosite']
+        self.output_file = self.parameters_eda['output_file']
         self.min_word_length = 4
         self.max_word_length = 16
         self.alphabet = Helper.get_alphabet()
@@ -21,7 +21,7 @@ class EDA:
         self.letter_to_idx = {c: i for i, c in enumerate(self.alphabet)}
 
     def UMDA(self, words, trigram_model, dictionnaire):
-        population = [(w, gen_lm.perplexité(w, trigram_model)) for w in words]
+        population = [(w, Helper.calculate_perplexity(w, trigram_model)) for w in words]
         population = sorted(population, key=lambda x: x[1])[:self.population_size]
         results = []
 
@@ -65,7 +65,7 @@ class EDA:
                     word_list.append(letter)
 
                 word = ''.join(word_list)
-                fitness = gen_lm.perplexité(word, trigram_model)
+                fitness = Helper.calculate_perplexity(word, trigram_model)
                 new_population.append((word, fitness))
 
             population = sorted(new_population, key=lambda x: x[1])
@@ -75,5 +75,6 @@ class EDA:
                     results.append(word)
 
             if len(results) >= self.population_size:
+                Helper.save_results("UMDA", results, self.output_file, trigram_model)
                 return results[:self.population_size]
 

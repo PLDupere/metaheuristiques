@@ -1,5 +1,8 @@
 from nltk.probability import FreqDist
 from random import choice, randint, random
+import csv
+
+import gen_lm
 
 
 class Helper:
@@ -20,7 +23,7 @@ class Helper:
 
     @staticmethod
     def is_valid_word(word, dictionnaire):
-        if not Helper.__avoid_repetition_excessive(word) and not Helper.__avoid_word_in_dictionary(word, dictionnaire):
+        if not Helper.__avoid_repetition_excessive(word) and not Helper.__avoid_word_in_dictionary(word, dictionnaire) and len(word) >= 4 and len(word) <= 16:
             return True
         return False
 
@@ -61,3 +64,26 @@ class Helper:
         for letter in alphabet:
             probs.append(fdist[letter] / total if total > 0 else 0)
         return probs
+
+
+    @staticmethod
+    def save_results(results, output_file):
+        with open(output_file, 'a') as f:
+            for word in results:
+                f.write(f"{word}\n")
+
+
+    @staticmethod
+    def calculate_perplexity(word, trigram_model):
+        return gen_lm.perplexité(mot=word, trigram_model=trigram_model)
+
+
+    @staticmethod
+    def save_results(algorithme, results, output_file, trigram_model):
+        with open(output_file, 'a', newline='') as f:
+            writer = csv.writer(f)
+            if f.tell() == 0:
+                writer.writerow(['algorithme', 'mot', 'valeur'])
+            for mot in results:
+                value = Helper.calculate_perplexity(mot, trigram_model)
+                writer.writerow([algorithme, mot, value])

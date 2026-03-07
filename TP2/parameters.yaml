@@ -3,13 +3,20 @@ parameters_ga:
   population_size: 50
   franciosite: 9.5
   mutation_rate: 1.2
+  crossover_rate: 0.8
   elitisme: 1 # nombre generation, 0 pour désactiver
   etalon: True
-  losers: True
+  losers: False
+  number_of_loosers: 10
   reseed: True
+  number_of_reseeds: 5
+  output_file: "words.csv"
+  number_of_children: 2
 ---
 parameters_eda:
   population_size: 50
   franciosite: 5.5
   selection_ratio: 0.5
   learning_rate: 0.1
+  output_file: "words.csv"
+
