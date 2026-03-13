@@ -1,25 +1,29 @@
 ---
 parameters_ga:
-  population_size: 50
-  franciosite: 20.0
-  franciosite_diminution_by_generation: 10
+  population_size: 500
+  franciosite: 25.0
+  losers_franciosite: 25.0
+  franciosite_diminution_by_generation: 3.5
   mutation_rate: 1.2
   crossover_rate: 0.5
-  elitisme: 0 # nombre generation, 0 pour désactiver
+  elitisme: False
+  number_of_elitisme: 40
+  generation: 3 # nombre generation, 0 pour désactiver
   etalon: False
-  losers: False
-  number_of_losers: 10
+  losers: True
+  number_of_losers: 25
   reseed: False
   number_of_reseeds: 5
-  number_of_children: 1
+  number_of_children: 2
+  selection_method: "tournament" # "tournament", "wheel", "rank"
 ---
 parameters_eda:
-  population_size: 50
-  franciosite: 20.0
+  population_size: 500
+  franciosite: 15.0
   selection_ratio: 0.5
   learning_rate: 0.1
 ---
 parameters_general:
-  number_of_iterations: 20
-  number_of_words_to_generate: 50
-  output_file: "words.csv"
+  number_of_iterations: 25
+  number_of_words_to_generate: 1000
+  output_file: "mutat.csv"

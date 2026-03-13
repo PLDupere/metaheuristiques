@@ -23,6 +23,7 @@ class EDA_UMDA:
         population = [(w, Helper.calculate_perplexity(w, trigram_model)) for w in words]
         population = sorted(population, key=lambda x: x[1])[:self.population_size]
         results = []
+        safety_counter = 0
 
         base_probs = Helper.build_letter_probabilities(
             [w for w, _ in population], self.alphabet
@@ -74,6 +75,7 @@ class EDA_UMDA:
                     results.append(word)
                     break
 
-            if len(results) >= self.population_size:
+            safety_counter += 1
+            if len(results) >= self.population_size or safety_counter > 10000:
                 return results[:self.population_size]
 

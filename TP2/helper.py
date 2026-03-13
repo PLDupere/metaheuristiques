@@ -84,14 +84,14 @@ class Helper:
 
 
     @staticmethod
-    def tournament_selection(words, tournament_size=3, trigram_model=None):
+    def __tournament_selection(words, tournament_size=3, trigram_model=None):
         selected = random.choices(words, k=tournament_size)
         parent = min(selected, key=lambda word: Helper.calculate_perplexity(word, trigram_model))
         return parent
 
 
     @staticmethod
-    def wheel_selection(words, trigram_model=None):
+    def __wheel_selection(words, trigram_model=None):
         perplexities = [Helper.calculate_perplexity(word, trigram_model) for word in words]
         fitness = [1 / p for p in perplexities]
         total_fitness = sum(fitness)
@@ -101,9 +101,21 @@ class Helper:
 
 
     @staticmethod
-    def rank_selection(words, trigram_model=None):
+    def __rank_selection(words, trigram_model=None):
         ranked_words = sorted(words, key=lambda word: Helper.calculate_perplexity(word, trigram_model))
         total_ranks = sum(range(1, len(ranked_words) + 1))
         probabilities = [(len(ranked_words) - i) / total_ranks for i in range(len(ranked_words))]
         parent = random.choices(ranked_words, weights=probabilities)[0]
         return parent
+
+
+    @staticmethod
+    def select_parent(selection_method, words, trigram_model=None):
+        if selection_method == "tournament":
+            return Helper.__tournament_selection(words, trigram_model=trigram_model)
+        elif selection_method == "wheel":
+            return Helper.__wheel_selection(words, trigram_model=trigram_model)
+        elif selection_method == "rank":
+            return Helper.__rank_selection(words, trigram_model=trigram_model)
+        else:
+            raise ValueError("Invalid selection method")
