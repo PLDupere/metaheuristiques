@@ -23,20 +23,14 @@ Le projet fait partie du TP2 du cours 8INF852 sur les métaheuristiques.
 
 ## Installation
 
-1. Cloner le dépôt :
-   ```
-   git clone <url_du_dépôt>
-   cd TP2
-   ```
-
-2. Créer un environnement virtuel (recommandé) :
+1. Créer un environnement virtuel (recommandé) :
    ```
    python -m venv .venv
    source .venv/bin/activate  # Sur Linux/Mac
    # ou .venv\Scripts\activate sur Windows
    ```
 
-3. Installer les dépendances :
+2. Installer les dépendances :
    ```
    pip install nltk
    pip install numpy
@@ -67,12 +61,3 @@ Les résultats sont sauvegardés dans le dossier `results/` sous forme de fichie
 - `parameters.yaml` : Fichier de configuration des paramètres
 - `lexique/Lexique383.tsv` : Lexique français utilisé
 - `results/` : Dossier contenant les résultats des exécutions
-
-## Résultats
-
-Les résultats incluent :
-- `mutat.csv` : Résultats de l'algorithme avec mutation
-- `cross1.csv` : Résultats du croisement à un point
-- `cross2.csv` : Résultats du croisement à plusieurs points
-- `umda.csv` : Résultats de l'algorithme UMDA
-- `words*.csv` : Mots générés à différentes étapes
