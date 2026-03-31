@@ -1,0 +1,25 @@
+
+# Library files
+bin/
+.lib/
+lib/
+include/
+lib64/
+
+# cache
+__pycache__/
+
+# Virtual envs and env folders
+.env/
+.env
+.venv/
+.venv
+
+# VS Code
+.vscode/
+
+# Code Spell
+.cspell.jsonc
+
+# Results
+results/
