@@ -43,7 +43,7 @@ Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : 
 
 ## Prérequis
 
-- Python 3.13.11
+- Python 3.13.12
 - numpy
 - matplotlib
 - scipy
