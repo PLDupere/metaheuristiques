@@ -1,14 +1,14 @@
 ## Structure du Projet
 
-Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : Random Search, Hill Climbing, et Simulated Annealing.
+Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : Particulaires Swarm Optimization, Differential Evolution, et Ant Colony Optimization.
 
 - **spring_design.py** : Classe principale définissant le problème d'optimisation avec la fonction objectif et les contraintes.
 
-- **random_search.py** : Implémente l'algorithme Random Search pour explorer l'espace de solutions aléatoirement.
+- **particulaires_swarm_optimization.py** : .
 
-- **hill_climbing.py** : Implémente l'algorithme Hill Climbing avec génération de voisinage et détection de stagnation.
+- **differential_evolution.py** : .
 
-- **simulated_annealing.py** : Implémente le Recuit Simulé avec plusieurs stratégies de refroidissement (exponentiel, linéaire, logarithmique).
+- **ant_colony_optimization.py** : .
 
 - **helper.py** : Classe utilitaire contenant des fonctions pour l'entrée utilisateur, la sauvegarde des résultats en CSV et la visualisation 3D des solutions.
 
