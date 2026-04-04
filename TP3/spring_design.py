@@ -12,8 +12,8 @@ class SpringDesign:
 
 
     def calcul_spring(self, x):
-        # if not self.is_valid(x):
-        #     return self.__penalty(x)
+        if not self.is_valid(x):
+            return self.__penalty(x)
         return x[0]**2 * x[1] + (2 + x[2])
 
 

@@ -2,6 +2,7 @@ import csv
 import os
 from datetime import datetime
 import matplotlib.pyplot as plt
+import pandas as pd
 
 class Helper:
 
@@ -87,17 +88,199 @@ class Helper:
                 print("Erreur : Le pourcentage de variation doit être compris entre 0 et 1.")
 
 
-    def plot_solution(self, best_random_solution, best_climbing_hill_solution, best_simulated_annealing_solution):
-        # https://matplotlib.org/stable/api/pyplot_summary.html
-        fig = plt.figure(figsize=(9,7))
-        ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(best_random_solution[0], best_random_solution[1], best_random_solution[2], alpha=0.15, s=50, color='blue', label='random search')
-        ax.scatter(best_climbing_hill_solution[0], best_climbing_hill_solution[1], best_climbing_hill_solution[2], alpha=0.15, s=50, color='green', label='Hill Climbing')
-        ax.scatter(best_simulated_annealing_solution[0], best_simulated_annealing_solution[1], best_simulated_annealing_solution[2], alpha=0.15, s=50, color='red', label='Simulated Annealing')
-        ax.set_xlabel('Diamètre du fil (x0)')
-        ax.set_ylabel('Diamètre spirale (x1)')
-        ax.set_zlabel('Nb spirales (x2)')
-        ax.set_title('Meilleures solutions trouvées')
-        ax.legend()
-        plt.savefig("results/valid_space.png")
-        print("Plot saved: results/valid_space.png")
+    @staticmethod
+    def save_stats_from_csv():
+        folder = 'results'
+        os.makedirs(folder, exist_ok=True)
+
+        for filename in os.listdir(folder):
+            if filename.endswith(".csv"):
+                file_path = os.path.join(folder, filename)
+                df = pd.read_csv(file_path)
+
+                if 'cost' in df.columns:
+                    cost_series = pd.to_numeric(df['cost'], errors='coerce').dropna()
+
+                    stats = {
+                        "count": cost_series.count(),
+                        "mean": cost_series.mean(),
+                        "min": cost_series.min(),
+                        "q1 (25%)": cost_series.quantile(0.25),
+                        "median (q2, 50%)": cost_series.median(),
+                        "q3 (75%)": cost_series.quantile(0.75),
+                        "max": cost_series.max(),
+                        "std": cost_series.std(),
+                    }
+
+                    txt_filename = os.path.join(folder, f"{os.path.splitext(filename)[0]}_stats.txt")
+                    with open(txt_filename, "w") as f:
+                        f.write(f"Statistiques pour {filename}\n")
+                        f.write("="*40 + "\n")
+                        for k, v in stats.items():
+                            f.write(f"{k}: {v}\n")
+
+                    print(f"Stats saved: {txt_filename}")
+
+
+    @staticmethod
+    def plot_cost_boxplot_per_file(folder='results'):
+        if not os.path.exists(folder):
+            print(f"Le dossier '{folder}' n'existe pas.")
+            return
+        for filename in os.listdir(folder):
+            if filename.endswith("_stats.txt"):
+                file_path = os.path.join(folder, filename)
+                stats_dict = {}
+                with open(file_path, "r") as f:
+                    for line in f:
+                        if ':' in line:
+                            key, value = line.strip().split(":")
+                            key = key.strip()
+                            value = float(value.strip())
+                            stats_dict[key] = value
+
+                box_data = [
+                    stats_dict['min'],
+                    stats_dict['q1 (25%)'],
+                    stats_dict['median (q2, 50%)'],
+                    stats_dict['q3 (75%)'],
+                    stats_dict['max']
+                ]
+
+                fig, ax = plt.subplots(figsize=(6, 4))
+                ax.boxplot([box_data], labels=[filename.replace("_stats.txt", "")], patch_artist=True)
+                ax.set_title(f"Répartition des coûts: {filename}")
+                ax.set_ylabel("Cost")
+                plt.tight_layout()
+                save_path = os.path.join(folder, f"{filename.replace('_stats.txt', '')}_boxplot.png")
+                plt.savefig(save_path)
+                plt.close(fig)
+
+
+    @staticmethod
+    def plot_cost_boxplot_overall(folder='results'):
+        if not os.path.exists(folder):
+            print(f"Le dossier '{folder}' n'existe pas.")
+            return
+
+        data = {}
+        found_file = False
+        for filename in os.listdir(folder):
+            if filename.endswith(".csv") and "iteration" in filename.lower():
+                found_file = True
+                file_path = os.path.join(folder, filename)
+                df = pd.read_csv(file_path)
+
+                if 'cost' in df.columns:
+                    costs = pd.to_numeric(df['cost'], errors='coerce').dropna()
+                    data[filename.replace(".csv","")] = costs.tolist()
+
+        if not found_file or not data:
+            print("Aucun fichier CSV valide trouvé.")
+            return
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+        ax.boxplot(data.values(), labels=list(data.keys()), patch_artist=True)
+        ax.set_title("Répartition des coûts par fichier / itérations")
+        ax.set_ylabel("Cost")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        save_path = os.path.join(folder, "all_iterations_boxplot.png")
+        plt.savefig(save_path)
+        print(f"Graphique sauvegardé : {save_path}")
+        plt.show()
+
+
+    @staticmethod
+    def get_costs_sorted_per_file(folder='results', keyword="iteration"):
+        if not os.path.exists(folder):
+            print(f"Le dossier '{folder}' n'existe pas.")
+            return {}
+    
+        costs_per_file = {}
+        for filename in os.listdir(folder):
+            if filename.endswith(".csv") and keyword.lower() in filename.lower():
+                file_path = os.path.join(folder, filename)
+                df = pd.read_csv(file_path)
+                if 'cost' in df.columns:
+                    costs = pd.to_numeric(df['cost'], errors='coerce').dropna().tolist()
+                    costs.sort(reverse=True)
+                    costs_per_file[filename] = costs
+
+        if not costs_per_file:
+            print("Aucun fichier CSV avec des coûts trouvé.")
+            return {}
+
+        return costs_per_file
+
+
+    @staticmethod
+    def plot_costs_sorted_per_file(folder='results', keyword="iteration"):
+        costs_per_file = Helper.get_costs_sorted_per_file(folder, keyword)
+        if not costs_per_file:
+            print("Aucun fichier avec coûts trouvé pour le plot.")
+            return
+
+        for filename, costs in costs_per_file.items():
+            plt.figure(figsize=(8,4))
+            plt.plot(range(1, len(costs)+1), costs, marker='o', linestyle='-', alpha=0.7)
+            plt.xlabel("Index (du plus grand au plus petit)")
+            plt.ylabel("Cost")
+            plt.title(f"Évolution des coûts triés : {filename.replace('.csv','')}")
+            plt.grid(True)
+            plt.tight_layout()
+            save_path = os.path.join(folder, f"{filename.replace('.csv','')}_sorted_costs.png")
+            plt.savefig(save_path)
+            plt.close()
+
+
+    @staticmethod
+    def get_all_costs_overall(folder='results', keyword="iteration"):
+        if not os.path.exists(folder):
+            print(f"Le dossier '{folder}' n'existe pas.")
+            return []
+
+        all_costs = []
+        for filename in os.listdir(folder):
+            if filename.endswith(".csv") and keyword.lower() in filename.lower():
+                file_path = os.path.join(folder, filename)
+                df = pd.read_csv(file_path)
+
+                if 'cost' in df.columns:
+                    costs = pd.to_numeric(df['cost'], errors='coerce').dropna()
+                    all_costs.extend(costs.tolist())
+
+        if not all_costs:
+            print("Aucune valeur de cost trouvée.") 
+            return []
+
+        all_costs.sort(reverse=True)
+        return all_costs
+
+
+    @staticmethod
+    def plot_costs_sorted_overall(folder='results', keyword="iteration"):
+        costs_per_file = Helper.get_costs_sorted_per_file(folder, keyword)
+        all_costs = Helper.get_all_costs_overall(folder, keyword)
+
+        if not costs_per_file:
+            print("Aucun fichier avec coûts trouvé pour le plot.")
+            return
+
+        plt.figure(figsize=(12,6))
+        for filename, costs in costs_per_file.items():
+            plt.plot(range(1, len(costs)+1), costs, marker='o', linestyle='-', alpha=0.7, label=filename.replace(".csv",""))
+
+        if all_costs:
+            plt.plot(range(1, len(all_costs)+1), all_costs, linestyle='--', color='black', alpha=0.8, label='All Costs Overall')
+
+        plt.xlabel("Index (du plus grand au plus petit)")
+        plt.ylabel("Cost")
+        plt.title("Évolution des coûts triés par fichier")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        save_path = os.path.join(folder, "all_sorted_costs_plot.png")
+        plt.savefig(save_path)
+        print(f"Graphe sauvegardé : {save_path}")
+        plt.show()
