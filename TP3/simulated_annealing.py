@@ -23,18 +23,19 @@ class SimulatedAnnealing:
         temperature = self.initial_temperature
         current_solution = np.array(self.spring_design.generate_random_solution())
         current_cost = self.__cost(current_solution)
-        best_solution = None
-        best_cost = float('inf')
-        stagnation_counter = 0
+        best_solution = current_solution.copy()
+        best_cost = current_cost
+        stall_counter = 0
 
         for iteration in range(self.max_iterations):
+            previous_best = best_cost
             tmp_solution = current_solution.copy()
             for idx in range(len(tmp_solution)):
                 lower, upper = self.spring_design.bounds[idx]
 
                 variation = np.random.uniform(
-                   -temperature * (upper - lower),
-                   temperature * (upper - lower)
+                    -temperature * (upper - lower),
+                    temperature * (upper - lower)
                 )
 
                 value = tmp_solution[idx] + variation
@@ -43,27 +44,25 @@ class SimulatedAnnealing:
 
             tmp_cost = self.__cost(tmp_solution)
             delta = tmp_cost - current_cost
-
             if delta < 0 or np.random.rand() < math.exp(-delta / temperature):
                 current_solution = tmp_solution
                 current_cost = tmp_cost
 
-            if  self.spring_design.is_valid(current_solution):
+            if self.spring_design.is_valid(current_solution):
                 if current_cost < best_cost:
                     best_solution = current_solution.copy()
                     best_cost = current_cost
-                    stagnation_counter = 0
                     Helper.save_to_csv("sa_iteration", iteration, current_solution, current_cost)
-                    print(f"Nouvelle meilleure: {best_solution} coût={best_cost:.12f}")
 
-            if abs(delta) > self.stagnation_value:
-                stagnation_counter += 1
-            if stagnation_counter >= self.stagnation_iteration:
-                temperature = self.adaptive_factor
-                stagnation_counter = 0
-                print(f"Réchauffement → T = {temperature:.12f}")
-
+            if abs(previous_best - best_cost) < self.stagnation_value:
+                stall_counter += 1
+            else:
+                stall_counter = 0
+            if stall_counter >= self.stagnation_iteration:
+                print(f"Critère d'arrêt : Simulated Annealing {iteration}")
+                break
             temperature = self.__cooling_strategy(iteration, temperature)
+
         return best_solution, best_cost
 
 

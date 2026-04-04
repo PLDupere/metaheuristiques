@@ -78,7 +78,7 @@ class AntColonyOptimization:
 
                 cost = self.spring_design.calcul_spring(temp_solution)
                 if self.spring_design.is_valid(temp_solution):
-                    Helper.save_to_csv("aco_iteration", iteration, temp_solution, cost)
+                    Helper.save_to_csv("ac_iteration", iteration, temp_solution, cost)
                     new_archive.append(temp_solution)
 
             archive.extend(new_archive)
