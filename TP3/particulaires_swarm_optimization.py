@@ -105,7 +105,7 @@ class ParticulairesSwarmOptimization:
             else:
                 stall_counter = 0
             if stall_counter >= self.stall_limit:
-                print(f"Critère d'arrêt : Particulaire Swarm Optimization {iteration}")
+                # print(f"Critère d'arrêt : Particulaire Swarm Optimization {iteration}")
                 break
 
         return global_best_pos, global_best_cost

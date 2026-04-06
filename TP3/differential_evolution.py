@@ -74,7 +74,7 @@ class DifferentialEvolution:
             else:
                 stall_counter = 0
             if stall_counter >= self.stall_limit:
-                print(f"Critère d'arrêt : differential evolution {iteration}")
+                # print(f"Critère d'arrêt : differential evolution {iteration}")
                 break
 
         return global_best_position, global_best_cost

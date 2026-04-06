@@ -97,7 +97,7 @@ class AntColonyOptimization:
             else:
                 stall_counter = 0
             if stall_counter >= self.stall_limit:
-                print(f"Critère d'arrêt : Ant Colony Optimization à l'itération {iteration}")
+                # print(f"Critère d'arrêt : Ant Colony Optimization à l'itération {iteration}")
                 break
 
         return best_solution, best_cost

@@ -115,17 +115,14 @@ class Helper:
                     txt_filename = os.path.join(folder, f"{os.path.splitext(filename)[0]}_stats.txt")
                     with open(txt_filename, "w") as f:
                         f.write(f"Statistiques pour {filename}\n")
-                        f.write("="*40 + "\n")
                         for k, v in stats.items():
                             f.write(f"{k}: {v}\n")
-
-                    print(f"Stats saved: {txt_filename}")
 
 
     @staticmethod
     def plot_cost_boxplot_per_file(folder='results'):
         if not os.path.exists(folder):
-            print(f"Le dossier '{folder}' n'existe pas.")
+            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
             return
         for filename in os.listdir(folder):
             if filename.endswith("_stats.txt"):
@@ -160,7 +157,7 @@ class Helper:
     @staticmethod
     def plot_cost_boxplot_overall(folder='results'):
         if not os.path.exists(folder):
-            print(f"Le dossier '{folder}' n'existe pas.")
+            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
             return
 
         data = {}
@@ -176,7 +173,7 @@ class Helper:
                     data[filename.replace(".csv","")] = costs.tolist()
 
         if not found_file or not data:
-            print("Aucun fichier CSV valide trouvé.")
+            print("Erreur : Aucun fichier CSV valide trouvé.")
             return
 
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -187,14 +184,13 @@ class Helper:
         plt.tight_layout()
         save_path = os.path.join(folder, "all_iterations_boxplot.png")
         plt.savefig(save_path)
-        print(f"Graphique sauvegardé : {save_path}")
         plt.show()
 
 
     @staticmethod
     def get_costs_sorted_per_file(folder='results', keyword="iteration"):
         if not os.path.exists(folder):
-            print(f"Le dossier '{folder}' n'existe pas.")
+            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
             return {}
     
         costs_per_file = {}
@@ -208,7 +204,7 @@ class Helper:
                     costs_per_file[filename] = costs
 
         if not costs_per_file:
-            print("Aucun fichier CSV avec des coûts trouvé.")
+            print("Erreur : Aucun fichier CSV avec des coûts trouvé.")
             return {}
 
         return costs_per_file
@@ -218,7 +214,7 @@ class Helper:
     def plot_costs_sorted_per_file(folder='results', keyword="iteration"):
         costs_per_file = Helper.get_costs_sorted_per_file(folder, keyword)
         if not costs_per_file:
-            print("Aucun fichier avec coûts trouvé pour le plot.")
+            print("Erreur : Aucun fichier avec coûts trouvé pour le plot.")
             return
 
         for filename, costs in costs_per_file.items():
@@ -237,7 +233,7 @@ class Helper:
     @staticmethod
     def get_all_costs_overall(folder='results', keyword="iteration"):
         if not os.path.exists(folder):
-            print(f"Le dossier '{folder}' n'existe pas.")
+            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
             return []
 
         all_costs = []
@@ -251,7 +247,7 @@ class Helper:
                     all_costs.extend(costs.tolist())
 
         if not all_costs:
-            print("Aucune valeur de cost trouvée.") 
+            print("Erreur : Aucune valeur de cost trouvée.") 
             return []
 
         all_costs.sort(reverse=True)
@@ -264,7 +260,7 @@ class Helper:
         all_costs = Helper.get_all_costs_overall(folder, keyword)
 
         if not costs_per_file:
-            print("Aucun fichier avec coûts trouvé pour le plot.")
+            print("Erreur : Aucun fichier avec coûts trouvé pour le plot.")
             return
 
         plt.figure(figsize=(12,6))
@@ -282,5 +278,4 @@ class Helper:
         plt.tight_layout()
         save_path = os.path.join(folder, "all_sorted_costs_plot.png")
         plt.savefig(save_path)
-        print(f"Graphe sauvegardé : {save_path}")
         plt.show()

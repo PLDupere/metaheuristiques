@@ -1,26 +1,28 @@
-## Structure du Projet
+# Optimisation de design de ressorts
 
-Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : Particulaires Swarm Optimization, Differential Evolution, et Ant Colony Optimization.
+Ce projet compare plusieurs métaheuristiques appliquées au problème de conception de ressorts.
 
-- **spring_design.py** : Classe principale définissant le problème d'optimisation avec la fonction objectif et les contraintes.
+## Structure du projet
 
-- **particulaires_swarm_optimization.py** : .
+- `spring_design.py` : définition du problème d'optimisation et contraintes
+- `particulaires_swarm_optimization.py` : implémentation de Particle Swarm Optimization (PSO)
+- `differential_evolution.py` : implémentation de Differential Evolution (DE)
+- `ant_colony_optimization.py` : implémentation de Ant Colony Optimization (ACO)
+- `simulated_annealing.py` : implémentation de Simulated Annealing (SA)
+- `helper.py` : utilitaires de saisie, sauvegarde CSV et visualisation
+- `main.py` : point d'entrée principal qui exécute les algorithmes et génère les résultats
+- `results/` : répertoire de sortie contenant les fichiers CSV et les graphiques générés
 
-- **differential_evolution.py** : .
+## Installation des dépendances
 
-- **ant_colony_optimization.py** : .
+1. Créez un environnement virtuel dans le dossier du projet :
+   ```bash
+   python3 -m venv .venv
+   ```
 
-- **helper.py** : Classe utilitaire contenant des fonctions pour l'entrée utilisateur, la sauvegarde des résultats en CSV et la visualisation 3D des solutions.
-
-- **main.py** : Point d'entrée principal qui coordonne l'exécution des trois algorithmes sur plusieurs itérations Monte-Carlo.
-
-- **results/** : Répertoire contenant les fichiers CSV avec les résultats et le graphique de visualisation.
-
-## Utilisation
-
-1. Activez l'environnement virtuel :
-   - Sur Linux/Mac :
-     ```
+2. Activez l'environnement virtuel :
+   - Linux/macOS :
+     ```bash
      source .venv/bin/activate
      ```
    - Sur Windows :
@@ -28,18 +30,43 @@ Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : 
      .venv\Scripts\activate
      ```
 
-2. Exécutez le script principal :
-   ```
-   python main.py
+3. Installez les dépendances :
+   ```bash
+   pip install -r requirements.txt
    ```
 
-3. Suivez les instructions pour configurer :
-   - Nombre de simulations Monte-Carlo
-   - Paramètres du Random Search
-   - Paramètres du Hill Climbing (variation, voisinage, stagnation)
-   - Paramètres du Simulated Annealing (température, refroidissement)
+4. Vérifiez que l'environnement est bien activé avant d'exécuter le script.
 
-4. Les résultats seront sauvegardés dans le répertoire `results/`.
+## Lancer les expériences
+
+### Configuration des constantes dans `main.py`
+
+Le fichier `main.py` contient les valeurs de configuration par défaut. Il est possible d'ajustées directement dans le fichier avant d'exécuter le programme :
+
+- DE : `POP_SIZE`, `MUTATION_FACTOR`, `CROSSOVER_RATE`
+- PSO : `NUM_PARTICLES`, `INERTIA_WEIGHT`, `NEIGHBORHOOD_SIZE`, `COGNITIVE_WEIGHT`, `SOCIAL_WEIGHT`
+- ACO : `NUM_ANTS`, `EVAPORATION`, `FACTOR`, `PHEROMONE_INIT`, `PHEROMONE_INCREASE_FACTOR`, `TOP_PHEROMONES`
+- SA : `TEMPERATURE`, `COOLING_RATE`, `COOLING_TYPE`, `ADAPTIVE_FACTOR`
+
+1. Avec l'environnement `.venv` activé, lancez :
+   ```bash
+   python3 main.py
+   ```
+
+2. Répondez aux questions affichées dans le terminal :
+   - nombre de simulations Monte-Carlo
+   - nombre d'itérations
+   - limite de stagnation
+   - delta limite pour la stagnation
+
+3. Le script exécute les algorithmes suivants :
+   - Particle Swarm Optimization (PSO)
+   - Differential Evolution (DE)
+   - Ant Colony Optimization (ACO)
+   - Simulated Annealing (SA)
+
+4. Les résultats sont enregistrés automatiquement dans le dossier `results/`.
+
 
 ## Prérequis
 
@@ -47,6 +74,7 @@ Projet d'optimisation de design de ressorts utilisant trois métaheuristiques : 
 - numpy
 - matplotlib
 - scipy
+- pandas
 
 ## Configuration de l'environnement virtuel
 

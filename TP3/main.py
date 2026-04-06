@@ -8,10 +8,10 @@ from simulated_annealing import SimulatedAnnealing
 if __name__ == "__main__":
     print("Métaheuristique pour l'optimisation de ressorts")
     print("Les paramètres suivants seront utilisés pour les trois algorithmes (Particule Swarm Optimization, Differential Evolution et Ant Colony Optimization) :")
-    montecarlo_iteration = Helper.get_integer_input("Spécifier  le  nombre  de simulations de Monte-Carlo : (100 par exemple) ")
+    montecarlo_iteration = Helper.get_integer_input("Spécifier  le  nombre  de simulations de Monte-Carlo : (50 par exemple) ")
     iterations = Helper.get_integer_input("Spécifier  le  nombre  d'itérations : (100 par exemple) ")
     stall_limit = Helper.get_integer_input("Spécifier  le  nombre  d'itérations de stagnation avant arrêt : (50 par exemple) ")
-    delta_limit = Helper.get_float_input("Spécifier  le  delta_limit pour le critère de stagnation : (0.0001 par exemple) ")
+    delta_limit = Helper.get_float_input("Spécifier  le  delta_limit pour le critère de stagnation : (0.00001 par exemple) ")
 
 
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     best_simulated_annealing_solution = None
     best_simulated_annealing_cost = float('inf')
 
-    POP_SIZE = 20
+    POP_SIZE = 50
     MUTATION_FACTOR = 0.5
     CROSSOVER_RATE = 0.7
     de = DifferentialEvolution(iterations=iterations,
@@ -34,11 +34,11 @@ if __name__ == "__main__":
                                 delta_limit=delta_limit,
                                 stall_limit=stall_limit)
 
-    NUM_PARTICLES = 40
-    INERTIA_WEIGHT = 0.7
-    NEIGHBORHOOD_SIZE = 3
-    COGNITIVE_WEIGHT = 1.4
-    SOCIAL_WEIGHT = 1.4
+    NUM_PARTICLES = 50
+    INERTIA_WEIGHT = 0.8
+    NEIGHBORHOOD_SIZE = 5
+    COGNITIVE_WEIGHT = 1.3
+    SOCIAL_WEIGHT = 1.3
     pso = ParticulairesSwarmOptimization(iterations=iterations,
                                         num_particles=NUM_PARTICLES,
                                         inertia_weight=INERTIA_WEIGHT,
@@ -48,9 +48,9 @@ if __name__ == "__main__":
                                         delta_limit=delta_limit,
                                         stall_limit=stall_limit)
 
-    NUM_ANTS = 30
+    NUM_ANTS = 50
     EVAPORATION = 0.8
-    FACTOR = 0.5
+    FACTOR = 0.7
     PHEROMONE_INIT = 1.0
     PHEROMONE_INCREASE_FACTOR = 0.1
     TOP_PHEROMONES = 5
@@ -65,9 +65,9 @@ if __name__ == "__main__":
                                 top_pheromones=TOP_PHEROMONES)
     
     TEMPERATURE = 1.0
-    COOLING_RATE = 0.987
-    COOLING_TYPE = 'logarithmic' # 'exponential' , 'linear' , 'logarithmic'
-    ADAPTIVE_FACTOR = 0.15
+    COOLING_RATE = 0.99
+    COOLING_TYPE = 'linear' # 'exponential' , 'linear' , 'logarithmic'
+    ADAPTIVE_FACTOR = 0.10
     sa = SimulatedAnnealing(max_iterations=iterations,
                             stagnation_value=delta_limit,
                             stagnation_iteration=stall_limit,

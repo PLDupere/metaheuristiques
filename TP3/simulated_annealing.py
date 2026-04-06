@@ -59,7 +59,7 @@ class SimulatedAnnealing:
             else:
                 stall_counter = 0
             if stall_counter >= self.stagnation_iteration:
-                print(f"Critère d'arrêt : Simulated Annealing {iteration}")
+                # print(f"Critère d'arrêt : Simulated Annealing {iteration}")
                 break
             temperature = self.__cooling_strategy(iteration, temperature)
 
