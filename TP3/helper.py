@@ -268,7 +268,7 @@ class Helper:
             plt.plot(range(1, len(costs)+1), costs, marker='o', linestyle='-', alpha=0.7, label=filename.replace(".csv",""))
 
         if all_costs:
-            plt.plot(range(1, len(all_costs)+1), all_costs, linestyle='--', color='black', alpha=0.8, label='All Costs Overall')
+            plt.plot(range(1, len(all_costs)+1), all_costs, linestyle='--', color='black', alpha=0.8, label='Somme de tous les coûts valides')
 
         plt.xlabel("Index (du plus grand au plus petit)")
         plt.ylabel("Cost")

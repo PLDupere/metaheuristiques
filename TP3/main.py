@@ -3,6 +3,7 @@ from differential_evolution import DifferentialEvolution
 from particulaires_swarm_optimization import ParticulairesSwarmOptimization
 from ant_colony_optimization import AntColonyOptimization
 from simulated_annealing import SimulatedAnnealing
+import time
 
 
 if __name__ == "__main__":
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     best_simulated_annealing_solution = None
     best_simulated_annealing_cost = float('inf')
 
-    POP_SIZE = 50
+    POP_SIZE = 5
     MUTATION_FACTOR = 0.5
     CROSSOVER_RATE = 0.7
     de = DifferentialEvolution(iterations=iterations,
@@ -34,9 +35,9 @@ if __name__ == "__main__":
                                 delta_limit=delta_limit,
                                 stall_limit=stall_limit)
 
-    NUM_PARTICLES = 50
+    NUM_PARTICLES = 20
     INERTIA_WEIGHT = 0.8
-    NEIGHBORHOOD_SIZE = 5
+    NEIGHBORHOOD_SIZE = 2
     COGNITIVE_WEIGHT = 1.3
     SOCIAL_WEIGHT = 1.3
     pso = ParticulairesSwarmOptimization(iterations=iterations,
@@ -48,10 +49,10 @@ if __name__ == "__main__":
                                         delta_limit=delta_limit,
                                         stall_limit=stall_limit)
 
-    NUM_ANTS = 50
+    NUM_ANTS = 60
     EVAPORATION = 0.8
-    FACTOR = 0.7
-    PHEROMONE_INIT = 1.0
+    FACTOR = 0.5
+    PHEROMONE_INIT = 0.95
     PHEROMONE_INCREASE_FACTOR = 0.1
     TOP_PHEROMONES = 5
     ac = AntColonyOptimization(iterations=iterations,
@@ -77,29 +78,41 @@ if __name__ == "__main__":
                             adaptive_factor=ADAPTIVE_FACTOR)
 
     for i in range(montecarlo_iteration):
+        start_pso = time.perf_counter()
         pso_solution, pso_cost = pso.optimize()
         Helper.save_to_csv(f'pso_meilleur', i, pso_solution, pso_cost)
         if pso_cost < best_pso_cost:
             best_pso_solution = pso_solution.copy()
             best_pso_cost = pso_cost
+        end_pso = time.perf_counter()
+        print(f"pso iteration time: {end_pso - start_pso:.4f} seconds")
 
+        start_de = time.perf_counter()
         de_solution, de_cost = de.optimize()
         Helper.save_to_csv(f'de_meilleur', i, de_solution, de_cost)
         if de_cost < best_differential_evolution_cost:
             best_differential_evolution_solution = de_solution.copy()
             best_differential_evolution_cost = de_cost
+        end_de = time.perf_counter()
+        print(f"de iteration time: {end_de - start_de:.4f} seconds")
 
+        start_ac = time.perf_counter()
         ac_solution, ac_cost = ac.optimize()
         Helper.save_to_csv(f'ac_meilleur', i, ac_solution, ac_cost)
         if ac_cost < best_ant_colony_cost:
             best_ant_colony_solution = ac_solution.copy()
             best_ant_colony_cost = ac_cost
+        end_ac = time.perf_counter()
+        print(f"ac iteration time: {end_ac - start_ac:.4f} seconds")
 
+        start_sa = time.perf_counter()
         sa_solution, sa_cost = sa.optimize()
         Helper.save_to_csv(f'sa_meilleur', i, sa_solution, sa_cost)
         if sa_cost < best_simulated_annealing_cost:
             best_simulated_annealing_solution = sa_solution.copy()
             best_simulated_annealing_cost = sa_cost
+        end_sa = time.perf_counter()
+        print(f"sa iteration time: {end_sa - start_sa:.4f} seconds")
 
     Helper().save_stats_from_csv()
     Helper.plot_cost_boxplot_per_file()
