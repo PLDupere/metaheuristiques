@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 import os
-from particle import Particle
+from algorithm import Algorithm
 from calcul import Calcul
+import time
 
 
 if __name__ == "__main__":
@@ -19,12 +20,14 @@ if __name__ == "__main__":
     print(f"Image chargée: {image.shape}")
     print(f"Niveaux de gris: [{image.min()}, {image.max()}]")
     
-    model = Particle(image)
+    model = Algorithm(image)
     
-    N_CLUSTERS = 50 # nombre de classes pour la segmentation
+    N_CLUSTERS = 16 # nombre de classes pour la segmentation
     N_PARTICLES = 20 # nombre de particules dans la population
-    centers, archive = model.PSO_segmentation(N_CLUSTERS, N_PARTICLES)
-    
+    start = time.perf_counter()
+    centers, archive = model.segmentation(N_CLUSTERS, N_PARTICLES)
+    end = time.perf_counter()
+    print(f"Temps d'exécution: {end - start:.4f} seconds")
     print(f"Centres optimaux: {centers}")
     print(f"Solutions non dominées: {archive.size()}")
     
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     print(f"Meilleure solution - J_IFCMS: {best_obj[0]:.2f}, J_edge: {best_obj[1]:.2f}")
     
     image_name = os.path.splitext(os.path.basename(image_path))[0]
-    results_dir = f"mri_results/{image_name}"
+    results_dir = f"mri_results/{image_name}_{N_CLUSTERS}_classes"
     os.makedirs(results_dir, exist_ok=True)
     
     
@@ -41,9 +44,9 @@ if __name__ == "__main__":
     labels = np.argmax(U, axis=0).reshape(image.shape).astype(np.uint8)
     
     output_path = os.path.join(results_dir, "segmentation_result.png")
-    cv2.imwrite(output_path, labels * 80) 
+    cv2.imwrite(output_path, labels * (255 // N_CLUSTERS)) 
 
-    metadata_path = os.path.join(results_dir, "segmentation_info.txt")
+    metadata_path = os.path.join(results_dir, f"segmentation_info.txt")
     with open(metadata_path, 'w') as f:
         f.write(f"Image source: {image_path}\n")
         f.write(f"Dimensions: {image.shape}\n")
@@ -52,5 +55,6 @@ if __name__ == "__main__":
         f.write(f"J_IFCMS: {best_obj[0]:.4f}\n")
         f.write(f"J_edge: {best_obj[1]:.4f}\n")
         f.write(f"Solutions non dominées: {archive.size()}\n")
+        f.write(f"Temps d'exécution: {end - start:.4f} seconds\n")
 
     print("THE END")

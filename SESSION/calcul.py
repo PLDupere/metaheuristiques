@@ -127,3 +127,89 @@ class Calcul:
         thresholds = {i: thresholds_array[i] for i in range(len(thresholds_array))}
         return thresholds
 
+
+    def find_misclassified_pixels(self, solutions, U_matrices, labels_list, thresholds_list):
+        """
+        # Étape 24 : Déterminer l'ensemble des pixels n'ayant pas le même label dans l'ensemble des solutions
+                    et les pixels ayant un degré d'appartenance inférieur au seuil T
+        """
+        if len(solutions) == 0 or len(U_matrices) == 0:
+            return []
+
+        n_pixels = self.image.size
+        misclassified = set()
+
+        if len(labels_list) > 1:
+            for pixel_index in range(n_pixels):
+                labels_for_pixel = [labels[pixel_index] for labels in labels_list]
+                if len(set(labels_for_pixel)) > 1:
+                    misclassified.add(pixel_index)
+
+        for index, U in enumerate(U_matrices):
+            thresholds = thresholds_list[index]
+            for pixel_index in range(n_pixels):
+                current_label = labels_list[index][pixel_index]
+                membership_value = U[current_label, pixel_index]
+                if membership_value < thresholds[current_label]:
+                    misclassified.add(pixel_index)
+
+        return sorted(list(misclassified))
+
+    def refine_misclassified_pixels(self, solutions, misclassified_pixels, U_matrices=None, labels_list=None):
+        """ Étape 25-31 : Raffinement des pixels mal classés
+            25: Pour chaque pixel extrait (xi) Faire
+            26: Pour j = 1 to N3 Faire
+            27: Calculer la fonction objectif J(j) i à l'aide de l'équation (III.11)
+            28: Fin Pour
+            29: Trouver j = argmin(J(j)i )
+            30: Affecter le pixel xi à la classe j
+            31: Fin Pour
+        """
+        if len(solutions) == 0:
+            raise ValueError("Aucune solution pour raffinement")
+
+        if labels_list is None or len(labels_list) == 0:
+            labels_flat = np.argmax(U_matrices[0], axis=0).copy()
+        else:
+            labels_flat = labels_list[0].copy()
+
+        image_flat = self.image.flatten()
+        n_clusters = int(np.max(labels_flat)) + 1
+
+        for pixel_idx in misclassified_pixels:
+            x_i = float(image_flat[pixel_idx])
+
+            best_j = None
+            best_J = float("inf")
+
+            for j in range(n_clusters):
+                J_value = ThresholdCalculator.compute_objective_function(
+                    x_i=x_i,
+                    local_window=image_flat,
+                    labels=labels_flat,
+                    j=j,
+                    beta=1.0,
+                )
+
+                if J_value < best_J:
+                    best_J = J_value
+                    best_j = j
+
+            if best_j is not None:
+                labels_flat[pixel_idx] = best_j
+
+        return labels_flat.reshape(self.image.shape)
+
+
+    def labels_to_centers(self, labels_2d):
+        n_clusters = int(np.max(labels_2d)) + 1
+        centers = []
+
+        for c in range(n_clusters):
+            pixels = self.image[labels_2d == c]
+            if len(pixels) > 0:
+                centers.append(float(np.mean(pixels)))
+            else:
+                centers.append(0.0)
+
+        return np.array(centers, dtype=float)
