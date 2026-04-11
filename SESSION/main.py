@@ -22,10 +22,11 @@ if __name__ == "__main__":
     
     model = Algorithm(image)
     
-    N_CLUSTERS = 16 # nombre de classes pour la segmentation
-    N_PARTICLES = 20 # nombre de particules dans la population
+    N_CLUSTERS = 4 # nombre de classes pour la segmentation
+    N_PARTICLES = 255 # nombre de particules dans la population
+    N_ITERATIONS = 1 # nombre d'itérations pour l'optimisation
     start = time.perf_counter()
-    centers, archive = model.segmentation(N_CLUSTERS, N_PARTICLES)
+    centers, archive = model.segmentation(N_CLUSTERS, N_PARTICLES, N_ITERATIONS)
     end = time.perf_counter()
     print(f"Temps d'exécution: {end - start:.4f} seconds")
     print(f"Centres optimaux: {centers}")
@@ -35,22 +36,25 @@ if __name__ == "__main__":
     print(f"Meilleure solution - J_IFCMS: {best_obj[0]:.2f}, J_edge: {best_obj[1]:.2f}")
     
     image_name = os.path.splitext(os.path.basename(image_path))[0]
-    results_dir = f"mri_results/{image_name}_{N_CLUSTERS}_classes"
+    results_dir = f"mri_results/{image_name}_classes_{N_CLUSTERS}_particles_{N_PARTICLES}"
     os.makedirs(results_dir, exist_ok=True)
     
     
     formulas = Calcul(image)
     U = formulas.compute_degree_membership(best_solution)
     labels = np.argmax(U, axis=0).reshape(image.shape).astype(np.uint8)
+    gray_step = 255 / max(N_CLUSTERS - 1, 1)
+    labels_gray = np.uint8(np.round(labels * gray_step))
     
     output_path = os.path.join(results_dir, "segmentation_result.png")
-    cv2.imwrite(output_path, labels * (255 // N_CLUSTERS)) 
+    cv2.imwrite(output_path, labels_gray ) 
 
     metadata_path = os.path.join(results_dir, f"segmentation_info.txt")
     with open(metadata_path, 'w') as f:
         f.write(f"Image source: {image_path}\n")
         f.write(f"Dimensions: {image.shape}\n")
         f.write(f"Nombre de classes: {N_CLUSTERS}\n")
+        f.write(f"Nombre de particules: {N_PARTICLES}\n")
         f.write(f"Centres optimaux: {best_solution}\n")
         f.write(f"J_IFCMS: {best_obj[0]:.4f}\n")
         f.write(f"J_edge: {best_obj[1]:.4f}\n")
