@@ -91,5 +91,4 @@ l’ensemble des pixels potentiellement mal classés.
 30: Affecter le pixel xi à la classe j
 31: Fin Pour
 
-## Referece
-[1]	A. N. Benaichouche, « Conception de métaheuristiques d’optimisation pour la segmentation d’images : application aux images IRM du cerveau et aux images de tomographie par émission de positons », Theses, Université Paris-Est, 2014. Consulté le: 11 avril 2026. [En ligne]. Disponible à: https://theses.hal.science/tel-01143778
+
