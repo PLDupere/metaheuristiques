@@ -43,12 +43,12 @@ class ParticulairesSwarmOptimization:
 
 
     def get_neighborhood_best(self, swarm, index):
-        neighbors = []
+        ring_neighbors = []
         for i in range(-self.neighborhood_size, self.neighborhood_size + 1):
             idx = (index + i) % self.num_particles
-            neighbors.append(swarm[idx])
+            ring_neighbors.append(swarm[idx])
 
-        best = min(neighbors, key=lambda p: p.best_cost)
+        best = min(ring_neighbors, key=lambda p: p.best_cost)
         return best.best_position
 
 
