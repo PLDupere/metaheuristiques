@@ -11,27 +11,28 @@ from equations import (
 
 
 class Calcul:
-    def __init__(self, image):
+    def __init__(self, image, background_threshold=1):
         self.image = image.astype(np.float64)
+        self.background_threshold = background_threshold
+        self.valid_mask = self.image > background_threshold
+        self.valid_pixels = self.image[self.valid_mask]
         self.grad = cv2.Laplacian(self.image, cv2.CV_64F)
-        self.local_img = cv2.blur(self.image, (3, 3))
 
 
     def compute_membership(self, centers, m=2.0):
-        image_flat = self.image.flatten()
-        membership_matrix_basic = self._compute_euclidienne_membership(image_flat, centers, m)
+        membership_matrix_basic = self._compute_euclidienne_membership(self.valid_pixels, centers, m)
 
         covariance_matrices = CovarianceCalculator.compute_covariance(
-            image_flat.reshape(-1, 1),
+            self.valid_pixels.reshape(-1, 1),
             centers,
             membership_matrix_basic,
             m
         )
 
         membership_matrix = MembershipCalculator.compute_membership_matrix(
-            image_flat, centers, covariance_matrices, m
+            self.valid_pixels, centers, covariance_matrices, m
         )
-        return membership_matrix.T, image_flat
+        return membership_matrix.T, self.valid_pixels
 
 
     def _compute_euclidienne_membership(self, data, centers, m=2.0):
@@ -58,13 +59,13 @@ class Calcul:
 
     def compute_J_IFCMS(self, centers, m=2.0, lam=1.0):
         # Calcule la fonction objectif J_IFCMS selon l'équation (III.5)
-        membership_matrix_T, image_flat = self.compute_membership(centers, m)
+        membership_matrix_T, valid_pixels = self.compute_membership(centers, m)
         membership_matrix = membership_matrix_T.T  # Remettre dans le bon format
-        local_flat = self.local_img.flatten()
+        local_flat = self.valid_pixels
         covariance_matrices = self.compute_covariance_matrix(centers, m)
 
         j_intensity = JIFCMS.compute(
-            image_flat.reshape(-1, 1),
+            valid_pixels.reshape(-1, 1),
             centers,
             covariance_matrices,
             membership_matrix,
@@ -83,12 +84,23 @@ class Calcul:
 
     def compute_J_edge(self, centers, m=2.0):
         #Fonction objectif Edge utilisant les nouvelles classes selon l'équation (III.9)
-        membership_matrix_T, _ = self.compute_membership(centers, m)
-        membership_matrix = membership_matrix_T.T
+        # Calculer membership sur l'image complète pour J_edge
+        image_flat = self.image.flatten()
+        membership_matrix_basic = self._compute_euclidienne_membership(image_flat, centers, m)
+
+        covariance_matrices = CovarianceCalculator.compute_covariance(
+            image_flat.reshape(-1, 1),
+            centers,
+            membership_matrix_basic,
+            m
+        )
+
+        membership_matrix = MembershipCalculator.compute_membership_matrix(
+            image_flat, centers, covariance_matrices, m
+        )
+
         j_edge = JEdge.compute(self.image, membership_matrix)
-
         sigma_grad = float(np.var(self.grad))
-
         labels = np.argmax(membership_matrix, axis=1).reshape(self.image.shape)
         num_components, _ = cv2.connectedComponents(labels.astype(np.uint8))
         num_components = int(num_components)
@@ -112,8 +124,21 @@ class Calcul:
 
 
     def compute_degree_membership(self, centers, m=2.0):
-        membership_matrix_T, _ = self.compute_membership(centers, m)
-        return membership_matrix_T
+        # Calculer sur l'image complète pour la sortie finale
+        image_flat = self.image.flatten()
+        membership_matrix_basic = self._compute_euclidienne_membership(image_flat, centers, m)
+
+        covariance_matrices = CovarianceCalculator.compute_covariance(
+            image_flat.reshape(-1, 1),
+            centers,
+            membership_matrix_basic,
+            m
+        )
+
+        membership_matrix = MembershipCalculator.compute_membership_matrix(
+            image_flat, centers, covariance_matrices, m
+        )
+        return membership_matrix.T
 
 
     def compute_threshold_T(self, centers, U=None):
@@ -178,17 +203,19 @@ class Calcul:
 
         for pixel_idx in misclassified_pixels:
             x_i = float(image_flat[pixel_idx])
-
+            row = pixel_idx // self.image.shape[1]
+            col = pixel_idx % self.image.shape[1]
             best_j = None
             best_J = float("inf")
 
             for j in range(n_clusters):
                 J_value = ThresholdCalculator.compute_objective_function(
                     x_i=x_i,
-                    local_window=image_flat,
-                    labels=labels_flat,
-                    j=j,
-                    beta=1.0,
+                    image=self.image,
+                    labels=labels_flat.reshape(self.image.shape),
+                    row=row,
+                    col=col,
+                    j=j
                 )
 
                 if J_value < best_J:
