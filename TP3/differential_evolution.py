@@ -66,7 +66,7 @@ class DifferentialEvolution:
             current_best_cost = cost[best_index]
             current_best_pos = self.population[best_index].copy()
 
-            if current_best_cost < global_best_cost:
+            if current_best_cost < global_best_cost and self.spring_design.is_valid(current_best_pos):
                 global_best_cost = current_best_cost
                 global_best_position = current_best_pos
             if previous_best - global_best_cost < self.delta_limit:

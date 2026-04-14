@@ -62,8 +62,8 @@ Le fichier `main.py` contient les valeurs de configuration par défaut. Il est p
 3. Le script exécute les algorithmes suivants :
    - Particle Swarm Optimization (PSO)
    - Differential Evolution (DE)
-   - Ant Colony Optimization (ACO)
    - Simulated Annealing (SA)
+      - Ant Colony Optimization (ACO) en bonus
 
 4. Les résultats sont enregistrés automatiquement dans le dossier `results/`.
 
@@ -75,6 +75,7 @@ Le fichier `main.py` contient les valeurs de configuration par défaut. Il est p
 - matplotlib
 - scipy
 - pandas
+- networkx
 
 ## Configuration de l'environnement virtuel
 

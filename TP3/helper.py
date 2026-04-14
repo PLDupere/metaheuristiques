@@ -3,6 +3,9 @@ import os
 from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
+import networkx as nx
+import math
 
 class Helper:
 
@@ -279,3 +282,32 @@ class Helper:
         save_path = os.path.join(folder, "all_sorted_costs_plot.png")
         plt.savefig(save_path)
         plt.show()
+
+
+    @staticmethod
+    def save_graph_plot(G, pos, path_edges=None, name="graph"):
+        results_dir = "results"
+        os.makedirs(results_dir, exist_ok=True)
+        plt.figure(figsize=(10, 8))
+        nx.draw_networkx_edges(G, pos, edge_color="blue", width=0.5)
+
+        if path_edges is not None:
+            nx.draw_networkx(
+                G,
+                pos,
+                with_labels=True,
+                edgelist=path_edges,
+                edge_color="red",
+                node_size=200,
+                width=3,
+            )
+        else:
+            nx.draw_networkx(G, pos, with_labels=True, node_size=200)
+
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filename = f"{results_dir}/{name}_{timestamp}.png"
+        plt.savefig(filename, bbox_inches="tight")
+        plt.close()
+        print(f"[Helper] Graph saved: {filename}")
+        return filename
+    

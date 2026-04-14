@@ -100,7 +100,7 @@ class ParticulairesSwarmOptimization:
                         global_best_cost = cost
                         global_best_pos = p.position.copy()
 
-            if previous_best - global_best_cost < self.delta_limit:
+            if previous_best - global_best_cost < self.delta_limit and self.spring_design.is_valid(global_best_pos):
                 stall_counter += 1
             else:
                 stall_counter = 0
