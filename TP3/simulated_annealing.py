@@ -63,6 +63,7 @@ class SimulatedAnnealing:
                 break
             temperature = self.__cooling_strategy(iteration, temperature)
 
+        Helper.save_to_csv("sa_iteration", iteration, best_solution, best_cost)
         return best_solution, best_cost
 
 

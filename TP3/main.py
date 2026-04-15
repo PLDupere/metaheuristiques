@@ -24,8 +24,8 @@ if __name__ == "__main__":
     best_simulated_annealing_cost = float('inf')
 
     POP_SIZE = 5
-    MUTATION_FACTOR = 0.5
-    CROSSOVER_RATE = 0.7
+    MUTATION_FACTOR = 0.6
+    CROSSOVER_RATE = 0.8
     de = DifferentialEvolution(iterations=iterations,
                                 pop_size=POP_SIZE,
                                 mutation_factor=MUTATION_FACTOR,
@@ -48,8 +48,8 @@ if __name__ == "__main__":
                                         stall_limit=stall_limit)
 
     TEMPERATURE = 1.0
-    COOLING_RATE = 0.99
-    COOLING_TYPE = 'linear' # 'exponential' , 'linear' , 'logarithmic'
+    COOLING_RATE = 0.987
+    COOLING_TYPE = 'logarithmic' # 'exponential' , 'linear' , 'logarithmic'
     ADAPTIVE_FACTOR = 0.15
     sa = SimulatedAnnealing(max_iterations=iterations,
                             stagnation_value=delta_limit,

@@ -1,5 +1,6 @@
 import numpy as np
-from spring_design import SpringDesign
+import random
+
 from helper import Helper
 
 
@@ -7,97 +8,107 @@ class AntColonyOptimization:
 
     def __init__(
         self,
-        iterations,
-        number_ants,
-        evaporation,
-        factor,
-        delta_limit,
-        stall_limit,
-        pheromone_init,
-        pheromone_increase_factor,
-        top_pheromones
+        graph,
+        iterations=100,
+        number_ants=20,
+        alpha=1.0,
+        beta=2.0,
+        evaporation=0.5,
+        pheromone_init=1.0,
+        elitism_weight=2
     ):
-        self.spring_design = SpringDesign()
+
+        self.G = graph
         self.iterations = iterations
         self.number_ants = number_ants
+        self.alpha = alpha
+        self.beta = beta
         self.evaporation = evaporation
-        self.factor = factor
-        self.bounds = self.spring_design.bounds
-        self.dimension = len(self.bounds)
-        self.delta_limit = delta_limit
-        self.stall_limit = stall_limit
-        self.pheromone_init = pheromone_init
-        self.pheromone_increase_factor = pheromone_increase_factor
-        self.top_pheromones = top_pheromones
-        self.pheromones = np.ones((self.dimension, 2)) * self.pheromone_init
+        self.elitism_weight = elitism_weight
+        self.start = 0
+        self.n_nodes = len(self.G.nodes())
 
-    def generate_solution(self):
-        solution = []
-        for i in range(self.dimension):
-            low, high = self.bounds[i]
-            pheromone_min, pheromone_max = self.pheromones[i]
-            mean = (pheromone_min + pheromone_max) / 2
-            sigma = self.factor * (high - low)
-            value = np.random.normal(mean, sigma)
-            value = np.clip(value, low, high)
-            solution.append(float(value))
-        return solution
+        for (u, v) in self.G.edges():
+            self.G.edges[u, v]["tau"] = pheromone_init
 
-    def update_pheromones(self, archive):
-        self.pheromones *= (1 - self.evaporation)
-        top_pheromones_solutions = min(self.top_pheromones, len(archive))
-        for i in range(self.dimension):
-            best_values = [sol[i] for sol in archive[:top_pheromones_solutions]]
-            mean_best = np.mean(best_values)
-            self.pheromones[i, 0] += mean_best * self.pheromone_increase_factor
-            self.pheromones[i, 1] += mean_best * self.pheromone_increase_factor
-        self.pheromones = np.clip(self.pheromones, 1e-6, 1e6)
+    def __heuristic(self, u, v):
+        return 1.0 / self.G.edges[u, v]["cout"]
+
+
+    def __choose_next_node(self, current, visited):
+        neighbors = list(self.G.neighbors(current))
+        neighbors = [n for n in neighbors if n not in visited]
+        if not neighbors:
+            return None
+
+        probs = []
+        for node in neighbors:
+            tau = self.G.edges[current, node]["tau"]
+            eta = self.__heuristic(current, node)
+            probs.append((tau ** self.alpha) * (eta ** self.beta))
+
+        probs = np.array(probs)
+        if probs.sum() == 0:
+            return random.choice(neighbors)
+
+        probs = probs / probs.sum()
+        return np.random.choice(neighbors, p=probs)
+
+
+    def __generate_path(self):
+        current = self.start
+        visited = {current}
+        path = [current]
+        while len(visited) < self.n_nodes:
+            nxt = self.__choose_next_node(current, visited)
+            if nxt is None:
+                return None
+            path.append(nxt)
+            visited.add(nxt)
+            current = nxt
+        return path
+
+
+    def __path_cost(self, path):
+        return sum(
+            self.G.edges[path[i], path[i + 1]]["cout"]
+            for i in range(len(path) - 1)
+        )
+
+
+    def __update_pheromones(self, paths, costs, best_path):
+        for (u, v) in self.G.edges():
+            self.G.edges[u, v]["tau"] *= (1 - self.evaporation)
+
+        for path, cost in zip(paths, costs):
+            if path is None:
+                continue
+            for i in range(len(path) - 1):
+                u, v = path[i], path[i + 1]
+                self.G.edges[u, v]["tau"] += 1.0 / cost
+        if self.elitism_weight > 0 and best_path is not None:
+            best_cost = self.__path_cost(best_path)
+            for i in range(len(best_path) - 1):
+                u, v = best_path[i], best_path[i + 1]
+                self.G.edges[u, v]["tau"] += self.elitism_weight * (1.0 / best_cost)
 
     def optimize(self):
-        archive = [self.generate_solution() for _ in range(self.number_ants)]
-        archive_cost = [self.spring_design.calcul_spring(x) for x in archive]
-
-        best_solution = archive[np.argmin(archive_cost)]
-        best_cost = min(archive_cost)
-        stall_counter = 0
-
-        for iteration in range(self.iterations):
-            previous_best = best_cost
-            new_archive = []
-
+        best_path = None
+        best_cost = float("inf")
+        for i in range(self.iterations):
+            paths = []
+            costs = []
             for _ in range(self.number_ants):
-                index = np.random.randint(0, len(archive))
-                base = archive[index]
-                temp_solution = []
+                path = self.__generate_path()
+                if path is not None:
+                    cost = self.__path_cost(path)
+                    paths.append(path)
+                    costs.append(cost)
+                    if cost < best_cost:
+                        best_cost = cost
+                        best_path = path
 
-                for i in range(self.dimension):
-                    sigma = self.factor * (self.bounds[i][1] - self.bounds[i][0])
-                    value = np.random.normal(base[i], sigma)
-                    value = np.clip(value, self.bounds[i][0], self.bounds[i][1])
-                    temp_solution.append(float(value))
+            self.__update_pheromones(paths, costs, best_path)
+            Helper.save_to_csv("ac_iteration", i, best_path, best_cost)
 
-                cost = self.spring_design.calcul_spring(temp_solution)
-                if self.spring_design.is_valid(temp_solution):
-                    Helper.save_to_csv("ac_iteration", iteration, temp_solution, cost)
-                    new_archive.append(temp_solution)
-
-            archive.extend(new_archive)
-            archive_cost.extend([self.spring_design.calcul_spring(x) for x in new_archive])
-            sorted_index = np.argsort(archive_cost)
-            archive = [archive[i] for i in sorted_index[:self.number_ants]]
-            archive_cost = [archive_cost[i] for i in sorted_index[:self.number_ants]]
-
-            if archive_cost[0] < best_cost:
-                best_cost = archive_cost[0]
-                best_solution = archive[0]
-
-            self.update_pheromones(archive)
-            if previous_best - best_cost < self.delta_limit:
-                stall_counter += 1
-            else:
-                stall_counter = 0
-            if stall_counter >= self.stall_limit:
-                # print(f"Critère d'arrêt : Ant Colony Optimization à l'itération {iteration}")
-                break
-
-        return best_solution, best_cost
+        return best_path, best_cost
