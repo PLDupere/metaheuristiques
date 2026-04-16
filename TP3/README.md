@@ -45,8 +45,8 @@ Le fichier `main.py` contient les valeurs de configuration par défaut. Il est p
 
 - DE : `POP_SIZE`, `MUTATION_FACTOR`, `CROSSOVER_RATE`
 - PSO : `NUM_PARTICLES`, `INERTIA_WEIGHT`, `NEIGHBORHOOD_SIZE`, `COGNITIVE_WEIGHT`, `SOCIAL_WEIGHT`
-- ACO : `NUM_ANTS`, `EVAPORATION`, `FACTOR`, `PHEROMONE_INIT`, `PHEROMONE_INCREASE_FACTOR`, `TOP_PHEROMONES`
 - SA : `TEMPERATURE`, `COOLING_RATE`, `COOLING_TYPE`, `ADAPTIVE_FACTOR`
+- ACO : `MONTE_CARLO_ITERATION`, `ITERATIONS`, `TAU_INIT`, `NUM_ANTS`, `EVAPORATION `, `ALPHA`, `BETA`, `PHEROMONE_INIT`, `ELITISM_WEIGHT`
 
 1. Avec l'environnement `.venv` activé, lancez :
    ```bash
@@ -63,7 +63,7 @@ Le fichier `main.py` contient les valeurs de configuration par défaut. Il est p
    - Particle Swarm Optimization (PSO)
    - Differential Evolution (DE)
    - Simulated Annealing (SA)
-      - Ant Colony Optimization (ACO) en bonus
+   - Ant Colony Optimization (ACO) en bonus
 
 4. Les résultats sont enregistrés automatiquement dans le dossier `results/`.
 
