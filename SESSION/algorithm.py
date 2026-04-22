@@ -2,18 +2,26 @@ import numpy as np
 from calcul import Calcul
 from archive import ArchivePareto
 from equations.thresholds import ThresholdCalculator
+from sklearn.cluster import KMeans
 
 
 class Particle:
-    def __init__(self, n_clusters, candidate_centers_or_min, max_val=None, uniform=False):
-        if uniform:
-            # Ancienne initialisation : uniforme
-            min_val = candidate_centers_or_min
-            self.position = np.random.uniform(min_val, max_val, n_clusters)
+    def __init__(self, n_clusters, min_val, max_val, k_means):
+        if k_means:
+            # min_val == images
+            values = min_val.reshape(-1, 1)
+            kmeans = KMeans(
+                n_clusters=n_clusters,
+                init="k-means++",
+                n_init=10
+            )
+            kmeans.fit(values)
+            self.position = kmeans.cluster_centers_.flatten().astype(float)
         else:
-            # Nouvelle initialisation : parmi les candidats
-            candidate_centers = candidate_centers_or_min
-            self.position = np.random.choice(candidate_centers, size=n_clusters, replace=False)
+            # Ancienne initialisation : aléatoire
+            self.position = np.random.uniform(min_val, max_val, n_clusters)
+
+        self.position = self.position.astype(float)
         self.velocity = np.zeros(n_clusters)
         # Étape 6 : Initialiser les meilleures solutions personnelles
         self.best_position = self.position.copy()
@@ -39,14 +47,6 @@ class Algorithm:
         self.image = image
         self.calcul = Calcul(image, background_threshold)
 
-    def _get_candidate_centers(self, n_candidates):
-        # Calculer l'histogramme de l'image pour obtenir des valeurs représentatives
-        hist, bins = np.histogram(self.image.flatten(), bins=256, range=(0, 255))
-        # Sélectionner les valeurs avec les fréquences les plus élevées
-        sorted_indices = np.argsort(hist)[::-1]
-        candidate_centers = bins[sorted_indices[:n_candidates]].astype(float)
-        return candidate_centers
-
     def segmentation(self, use_improvement=True, n_clusters=3, n_particles=20, n_iter=10, 
                         w=0.7, c1=1.5, c2=1.5):
 
@@ -55,16 +55,15 @@ class Algorithm:
         max_val = np.max(self.image)
 
         if use_improvement:
-            # Nouvelle initialisation : choisir parmi les valeurs représentatives de l'histogramme
-            candidate_centers = self._get_candidate_centers(n_candidates=n_particles)
+            # Nouvelle initialisation : uniforme
             particles = [
-                Particle(n_clusters, candidate_centers)
+                Particle(n_clusters, self.image, max_val, k_means=True)
                 for _ in range(n_particles)
             ]
         else:
-            # Ancienne initialisation : uniforme entre min et max
+            # Ancienne initialisation : aléatoire
             particles = [
-                Particle(n_clusters, min_val, max_val, uniform=True)
+                Particle(n_clusters, min_val, max_val, k_means=False)
                 for _ in range(n_particles)
             ]
 

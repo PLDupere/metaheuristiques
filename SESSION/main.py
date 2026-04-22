@@ -5,25 +5,25 @@ import time
 from algorithm import Algorithm
 from PIL import Image
 from helper import Helper
-from skimage.exposure import match_histograms
 
 
 if __name__ == "__main__":
 
-    images_dir = "mri"
-    N_MONTE_CARLO = 5
-    USE_IMPROVEMENT = False ### TODO:
-    N_CLUSTERS = 6
-    N_PARTICLES = 1
-    N_ITERATIONS = 1
-    BACKGROUND_MASK = 5
+    IMAGES_DIR = os.getenv("IMAGES_DIR", "mri")
+    IMAGES_RESULTS_DIR = os.getenv("IMAGES_RESULTS_DIR", "mri_results")
+    N_MONTE_CARLO = int(os.getenv("N_MONTE_CARLO", 5))
+    USE_IMPROVEMENT = os.getenv("USE_IMPROVEMENT", "True") == "True"
+    N_CLUSTERS = int(os.getenv("N_CLUSTERS", 4))
+    N_PARTICLES = int(os.getenv("N_PARTICLES", 1))
+    N_ITERATIONS = int(os.getenv("N_ITERATIONS", 1))
+    BACKGROUND_MASK = int(os.getenv("BACKGROUND_MASK", 1))
 
-    for image_file in sorted(os.listdir(images_dir)):
+    for image_file in sorted(os.listdir(IMAGES_DIR)):
 
         if not image_file.lower().endswith((".png")):
             continue
 
-        image_path = os.path.join(images_dir, image_file)
+        image_path = os.path.join(IMAGES_DIR, image_file)
 
         try:
             image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
             labels_final = labels_final.copy()
             best_solution, best_obj = archive.solutions[0], archive.objectives[0]
             results_dir = os.path.join(
-                "mri_results",
+                IMAGES_RESULTS_DIR,
                 image_name,
                 f"iteration_{iteration}"
             )
@@ -75,19 +75,9 @@ if __name__ == "__main__":
             labels_gray = np.where(background_mask, 0, labels_gray)
             Image.fromarray(labels_gray, mode='L').save(output_path)
 
-            # Reconstruction de l'image segmentée pour visualiser les centres
-            # output_reconstructed = os.path.join(
-            #     results_dir,
-            #     f"segmentation_reconstructed_iteration_{iteration}.png"
-            # )
-            # reconstructed = centers_reconstructed[labels].astype(np.uint8)
-            # reconstructed = match_histograms(reconstructed, image).astype(np.uint8)
-            # reconstructed[background_mask] = 0
-            # Image.fromarray(reconstructed, mode='L').save(output_reconstructed)
-
             # Sauvegarde metadata
-            Helper.save_to_csv(f'J_IFCMS_{image_file}', iteration, best_solution, best_obj[0])
-            Helper.save_to_csv(f'J_edge_{image_file}', iteration, best_solution, best_obj[1])
+            Helper.save_to_csv(f'J_IFCMS_{image_file}', iteration, best_solution, best_obj[0], results_dir=IMAGES_RESULTS_DIR)
+            Helper.save_to_csv(f'J_edge_{image_file}', iteration, best_solution, best_obj[1], results_dir=IMAGES_RESULTS_DIR)
             metadata_path = os.path.join(
                 results_dir,
                 f"segmentation_info_iteration_{iteration}.txt"
@@ -105,7 +95,4 @@ if __name__ == "__main__":
                 f.write(f"Solutions non dominées: {archive.size()}\n")
                 f.write(f"Temps d'exécution: {end - start:.4f} seconds\n")
 
-        # Helper().save_stats_from_csv()
-        # Helper.plot_cost_boxplot_overall()
-        # Helper.plot_costs_sorted_overall()
 print("THE END")

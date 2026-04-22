@@ -7,12 +7,11 @@ import pandas as pd
 class Helper:
 
     @staticmethod
-    def save_to_csv(heuristique, iteration, solution, cost):
-        folder = 'results'
-        os.makedirs(folder, exist_ok=True)
+    def save_to_csv(heuristique, iteration, solution, cost, results_dir='results'):
+        os.makedirs(results_dir, exist_ok=True)
 
         date_str = datetime.now().strftime('%Y-%m-%d')
-        filename = os.path.join(folder, f'{heuristique}_{date_str}.csv')
+        filename = os.path.join(results_dir, f'{heuristique}_{date_str}.csv')
         file_exists = os.path.isfile(filename)
 
         with open(filename, mode='a', newline='') as file:
@@ -30,8 +29,8 @@ class Helper:
 
 
     @staticmethod
-    def save_stats_from_csv():
-        folder = 'results'
+    def save_stats_from_csv(results_dir='results'):
+        folder = results_dir
         os.makedirs(folder, exist_ok=True)
 
         for filename in os.listdir(folder):
@@ -61,13 +60,13 @@ class Helper:
 
 
     @staticmethod
-    def plot_cost_boxplot_per_file(folder='results'):
-        if not os.path.exists(folder):
-            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
+    def plot_cost_boxplot_per_file(results_dir='results'):
+        if not os.path.exists(results_dir):
+            print(f"Erreur : Le dossier '{results_dir}' n'existe pas.")
             return
-        for filename in os.listdir(folder):
+        for filename in os.listdir(results_dir):
             if filename.endswith("_stats.txt"):
-                file_path = os.path.join(folder, filename)
+                file_path = os.path.join(results_dir, filename)
                 stats_dict = {}
                 with open(file_path, "r") as f:
                     for line in f:
@@ -90,23 +89,23 @@ class Helper:
                 ax.set_title(f"Répartition des coûts: {filename}")
                 ax.set_ylabel("Cost")
                 plt.tight_layout()
-                save_path = os.path.join(folder, f"{filename.replace('_stats.txt', '')}_boxplot.png")
+                save_path = os.path.join(results_dir, f"{filename.replace('_stats.txt', '')}_boxplot.png")
                 plt.savefig(save_path)
                 plt.close(fig)
 
 
     @staticmethod
-    def plot_cost_boxplot_overall(folder='results'):
-        if not os.path.exists(folder):
-            print(f"Erreur : Le dossier '{folder}' n'existe pas.")
+    def plot_cost_boxplot_overall(results_dir='results'):
+        if not os.path.exists(results_dir):
+            print(f"Erreur : Le dossier '{results_dir}' n'existe pas.")
             return
 
         data = {}
         found_file = False
-        for filename in os.listdir(folder):
+        for filename in os.listdir(results_dir):
             if filename.endswith(".csv") and "iteration" in filename.lower():
                 found_file = True
-                file_path = os.path.join(folder, filename)
+                file_path = os.path.join(results_dir, filename)
                 df = pd.read_csv(file_path)
 
                 if 'cost' in df.columns:
@@ -123,7 +122,7 @@ class Helper:
         ax.set_ylabel("Cost")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        save_path = os.path.join(folder, "all_iterations_boxplot.png")
+        save_path = os.path.join(results_dir, "all_iterations_boxplot.png")
         plt.savefig(save_path)
         plt.show()
 

@@ -9,6 +9,8 @@ Implémentation de l'algorithme MO_IFCMS (Multi-Objective Fuzzy C-Means Segmenta
 - numpy
 - pandas
 - matplotlib
+- pillow
+- scikit-image
 - opencv-python
 
 ## Configuration de l'environnement virtuel et exécution
@@ -43,8 +45,35 @@ Implémentation de l'algorithme MO_IFCMS (Multi-Objective Fuzzy C-Means Segmenta
    deactivate
    ```
 
-## Utilisation
+## Dockerfile (Bonus)
 
+Naviguer vers l'emplacement du `Dockerfile`.
+S'assurer que les images sont dans le dossier `mri`.
+Les résultats seront enregistrés dans le dossier `mri_results`.
+
+Le fichier `.dockerignore` s'assure que le container docker ne contienne aucune image.
+
+### Construire l'image Docker
+docker build -t my-image .
+
+### Voir l'image Docker
+docker images
+
+### Exécution avec Bash
+docker run --rm \
+  -v (pwd)/mri:/app/mri `
+  -v (pwd)/mri_results:/app/mri_results `
+  -e N_MONTE_CARLO=5 \
+  -e USE_IMPROVEMENT=True \
+  -e N_CLUSTERS=4 \
+  -e N_PARTICLES=1 \
+  -e N_ITERATIONS=1 \
+  -e BACKGROUND_MASK=1 \
+  my-image
+
+### Exécution avec Nushell
+
+docker run --rm -v (pwd)/mri:/app/mri -v (pwd)/mri_results:/app/mri_results -e IMAGES_DIR=mri -e IMAGES_RESULTS_DIR=mri_results -e N_MONTE_CARLO=5 -e USE_IMPROVEMENT=True -e N_CLUSTERS=4 -e N_PARTICLES=1 -e N_ITERATIONS=1 -e BACKGROUND_MASK=1 my-image
 
 
 ## Pseudo code de l'algorithme  III.1 MO_IFCMS [1]
